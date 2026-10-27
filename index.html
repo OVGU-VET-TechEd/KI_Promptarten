@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt-Arten verstehen</title>
+<meta name="description" content="Interaktive Lerneinheit: Interaktionsprompt, Systemprompt, Skillprompt, Harness-Prompt, Loop-Prompt und Wiki-Prompt – für Studierende ohne Informatik-Hintergrund, mit Starter-Kit für Ollama und VS Code.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Semi+Condensed:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --main: #7a003f; --main-dark: #5c002f; --third: #f5ebf0;
+  --bg: #ffffff; --bg-soft: #f8f8f8; --bg-card: #ffffff;
+  --ink: #111; --ink-2: #3e3f40; --ink-3: #686a6c; --line: #cfd3d6; --line-soft: #e7e9ea;
+  --c-int: #1565c0; --c-sys: #7a003f; --c-skill: #00796b; --c-harn: #3e3f40; --c-loop: #d35400; --c-wiki: #6a3d9a;
+  --t-int: #e8f0fb; --t-sys: #f5ebf0; --t-skill: #e3f3f1; --t-harn: #eceeef; --t-loop: #fdeee3; --t-wiki: #efe8f6;
+  --ok: #2e7d32; --bad: #c62828; --code-bg: #f4f1f3;
+  --wrap: 1080px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --main: #e07aa8; --main-dark: #f0a0c4; --third: #3a1a2a;
+    --bg: #17171a; --bg-soft: #1f1f23; --bg-card: #232328;
+    --ink: #eee; --ink-2: #cfd0d2; --ink-3: #a0a3a6; --line: #3c3d42; --line-soft: #2c2d31;
+    --c-int: #6aa5f0; --c-sys: #e07aa8; --c-skill: #4fc1b0; --c-harn: #b9bdc1; --c-loop: #f39a5a; --c-wiki: #b99be0;
+    --t-int: #1c2a3d; --t-sys: #3a1a2a; --t-skill: #15322e; --t-harn: #2a2b2f; --t-loop: #3b2717; --t-wiki: #2c2238;
+    --ok: #6cc070; --bad: #ef7a7a; --code-bg: #26232a;
+  }
+}
+:root[data-theme="dark"] {
+  --main: #e07aa8; --main-dark: #f0a0c4; --third: #3a1a2a;
+  --bg: #17171a; --bg-soft: #1f1f23; --bg-card: #232328;
+  --ink: #eee; --ink-2: #cfd0d2; --ink-3: #a0a3a6; --line: #3c3d42; --line-soft: #2c2d31;
+  --c-int: #6aa5f0; --c-sys: #e07aa8; --c-skill: #4fc1b0; --c-harn: #b9bdc1; --c-loop: #f39a5a; --c-wiki: #b99be0;
+  --t-int: #1c2a3d; --t-sys: #3a1a2a; --t-skill: #15322e; --t-harn: #2a2b2f; --t-loop: #3b2717; --t-wiki: #2c2238;
+  --ok: #6cc070; --bad: #ef7a7a; --code-bg: #26232a;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 "Barlow", "Helvetica Neue", Arial, sans-serif; overflow-wrap: anywhere; }
+a { color: var(--main); }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 16px; }
+h1, h2, h3 { font-family: "Barlow Semi Condensed", "Barlow", sans-serif; font-weight: 600; line-height: 1.15; }
+code, pre, kbd { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 14px; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+pre { background: var(--code-bg); border: 1px solid var(--line-soft); border-radius: 4px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; margin: 10px 0; white-space: pre; overflow-wrap: normal; }
+pre code { background: none; padding: 0; }
+
+/* top + hero */
+.topbar { background: var(--bg-soft); border-bottom: 1px solid var(--line-soft); font-size: 14px; color: var(--ink-3); }
+.topbar .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; padding-top: 6px; padding-bottom: 6px; }
+.topbar a { color: var(--ink-2); text-decoration: none; }
+.hero { background: #7a003f; color: #fff; }
+.hero .wrap { padding-top: 40px; padding-bottom: 34px; }
+.kicker { font-family: "Barlow Semi Condensed", sans-serif; text-transform: uppercase; letter-spacing: .08em; font-size: 15px; opacity: .85; }
+.hero h1 { font-size: clamp(30px, 5vw, 48px); margin: 8px 0 12px; }
+.hero p { font-size: 19px; max-width: 760px; margin: 0 0 20px; }
+
+/* level switch */
+.level { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+.level button { flex: 1 1 240px; max-width: 360px; text-align: left; background: rgba(255,255,255,.1); color: #fff; border: 2px solid rgba(255,255,255,.35); border-radius: 6px; padding: 10px 14px; cursor: pointer; font: inherit; }
+.level button strong { display: block; font-size: 18px; }
+.level button span { font-size: 14.5px; opacity: .9; }
+.level button[aria-pressed="true"] { background: #fff; color: #7a003f; border-color: #fff; }
+body.einsteiger .nur-fortgeschritten, body.fortgeschritten .nur-einsteiger { display: none !important; }
+
+nav.toc { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+nav.toc .wrap { display: flex; gap: 4px 20px; flex-wrap: wrap; padding-top: 9px; padding-bottom: 9px; align-items: center; }
+nav.toc a { color: var(--ink); text-decoration: none; font-weight: 500; font-size: 15.5px; }
+nav.toc a:hover { color: var(--main); }
+nav.toc .lvl-badge { margin-left: auto; font-size: 13.5px; color: var(--ink-3); }
+
+main section { padding: 40px 0 8px; }
+main h2 { color: var(--main); font-size: clamp(26px, 3.6vw, 32px); margin: 0 0 14px; border-bottom: 2px solid var(--third); padding-bottom: 6px; }
+main h3 { font-size: 21px; margin: 18px 0 8px; }
+.lead { font-size: 19px; color: var(--ink-2); max-width: 820px; }
+.muted { color: var(--ink-3); font-size: 15px; }
+.box { background: var(--bg-card); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; }
+.box.tint { background: var(--bg-soft); }
+.box.adv { border-left: 5px solid var(--ink-2); }
+.box.adv::before { content: "🔧 Für Fortgeschrittene"; display: block; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.box.beg { border-left: 5px solid var(--c-skill); }
+.box.beg::before { content: "🌱 Einfach erklärt"; display: block; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 14px; }
+
+/* ---------- Big picture diagram ---------- */
+.picture { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 820px) { .picture { grid-template-columns: 1fr; } }
+.layer { cursor: pointer; border-radius: 8px; transition: box-shadow .2s, transform .2s; position: relative; }
+.layer:focus-visible { outline: 3px solid var(--main); outline-offset: 2px; }
+.layer.active { box-shadow: 0 0 0 3px var(--ink); }
+.harness { border: 3px solid var(--c-harn); background: var(--t-harn); padding: 12px; }
+.lbl { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 16px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.lbl small { font-family: "Barlow", sans-serif; font-weight: 400; font-size: 13.5px; color: var(--ink-3); }
+.tools { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 10px; }
+.tools span { font-size: 13px; background: var(--bg-card); border: 1px dashed var(--c-harn); border-radius: 3px; padding: 1px 8px; }
+.loop { border: 3px dashed var(--c-loop); background: var(--t-loop); padding: 12px; }
+.loopinner { display: grid; grid-template-columns: minmax(0, 1fr) 118px; gap: 10px; align-items: center; margin-top: 8px; }
+@media (max-width: 480px) { .loopinner { grid-template-columns: 1fr; } }
+.ctx { background: var(--bg-card); border: 2px solid var(--line); border-radius: 8px; padding: 10px; cursor: default; }
+.ctx .lbl { color: var(--ink-3); font-size: 14px; margin-bottom: 6px; }
+.slot { border-left: 6px solid; padding: 7px 10px; margin: 6px 0; border-radius: 4px; font-size: 15px; }
+.slot b { font-family: "Barlow Semi Condensed", sans-serif; font-size: 16px; }
+.slot.sys { border-color: var(--c-sys); background: var(--t-sys); }
+.slot.skill { border-color: var(--c-skill); background: var(--t-skill); }
+.slot.wiki { border-color: var(--c-wiki); background: var(--t-wiki); }
+.slot.int { border-color: var(--c-int); background: var(--t-int); }
+.slot.hist { border-color: var(--line); background: var(--bg-soft); color: var(--ink-3); cursor: default; }
+.model { text-align: center; background: var(--ink); color: var(--bg); border-radius: 50%; aspect-ratio: 1; display: grid; place-items: center; padding: 10px; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; line-height: 1.15; max-width: 130px; margin: 0 auto; }
+.model small { display: block; font-weight: 400; font-size: 12.5px; opacity: .8; }
+.info { position: sticky; top: 64px; }
+.info .box { border-top: 6px solid var(--accent, var(--main)); }
+.info h3 { margin-top: 0; color: var(--accent, var(--main)); }
+.info .who { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 15px; margin: 10px 0 0; }
+.info .who dt { color: var(--ink-3); }
+.info .who dd { margin: 0; }
+
+/* ---------- Tabs ---------- */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; border-bottom: 2px solid var(--line); }
+.tabs button { font: 600 16px "Barlow Semi Condensed", sans-serif; background: var(--bg-soft); color: var(--ink-2); border: 1px solid var(--line); border-bottom: none; border-radius: 6px 6px 0 0; padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 7px; }
+.tabs button .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--k); }
+.tabs button[aria-selected="true"] { background: var(--k); color: #fff; border-color: var(--k); }
+.tabs button[aria-selected="true"] .dot { background: #fff; }
+.panel { border: 1px solid var(--line); border-top: none; padding: 18px; background: var(--bg-card); border-radius: 0 0 6px 6px; }
+.panel[hidden] { display: none; }
+.panel .one { font-size: 20px; font-weight: 500; border-left: 5px solid var(--k); padding-left: 12px; margin: 0 0 14px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 10px; margin: 12px 0; }
+.facts div { background: var(--bg-soft); border-radius: 5px; padding: 8px 12px; font-size: 15px; }
+.facts div b { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 600; }
+.analogy { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-soft); border-radius: 6px; padding: 12px 14px; margin: 12px 0; }
+.analogy .ico { font-size: 30px; line-height: 1; }
+.example { border: 1px dashed var(--k); border-radius: 6px; padding: 10px 14px; margin: 12px 0; background: var(--bg); }
+.example > b { font-size: 13.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--k); }
+.warn { border-left: 4px solid var(--bad); padding: 4px 12px; margin: 12px 0; font-size: 15.5px; }
+
+/* ---------- Stepper ---------- */
+.stepper-nav { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.stepper-nav button { font: 500 15px "Barlow", sans-serif; border: 2px solid var(--line); background: var(--bg-card); color: var(--ink); border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+.stepper-nav button.on { border-color: var(--k, var(--main)); background: var(--k, var(--main)); color: #fff; }
+.stepper-nav button.done { border-color: var(--k, var(--main)); }
+.sim { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 820px) { .sim { grid-template-columns: 1fr; } }
+.sim h3 { margin: 0 0 8px; font-size: 17px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.sim .slot { font-size: 14.5px; animation: pop .35s ease; }
+.sim .slot pre { margin: 4px 0 0; padding: 6px 8px; font-size: 12.5px; white-space: pre-wrap; overflow-wrap: anywhere; background: rgba(255,255,255,.45); border: none; }
+:root[data-theme="dark"] .sim .slot pre { background: rgba(0,0,0,.25); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sim .slot pre { background: rgba(0,0,0,.25); } }
+.slot.harn { border-color: var(--c-harn); background: var(--t-harn); }
+.slot.loop { border-color: var(--c-loop); background: var(--t-loop); }
+@keyframes pop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.out { background: var(--bg-card); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-size: 15px; }
+.out table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 6px 0; }
+.out th, .out td { border: 1px solid var(--line); padding: 4px 6px; text-align: left; vertical-align: top; }
+.out th { background: var(--bg-soft); }
+.verdict { margin-top: 10px; font-size: 15px; padding: 8px 12px; border-radius: 5px; background: var(--bg-soft); }
+.stepbtns { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.btn { font: 600 16px "Barlow", sans-serif; background: var(--main); color: #fff; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.btn:hover { background: var(--main-dark); color: #fff; }
+.btn.ghost { background: transparent; color: var(--main); border: 2px solid var(--main); }
+.btn:disabled { opacity: .4; cursor: default; }
+
+/* ---------- Table ---------- */
+.table-scroll { overflow-x: auto; }
+table.cmp { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 15px; }
+table.cmp th, table.cmp td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+table.cmp thead th { border-bottom: 3px solid var(--k); font-family: "Barlow Semi Condensed", sans-serif; font-size: 16px; }
+table.cmp tbody th { color: var(--ink-3); font-weight: 500; white-space: nowrap; }
+
+/* ---------- Quiz ---------- */
+.quiz { display: grid; gap: 12px; }
+.q { border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; background: var(--bg-card); }
+.q p { margin: 0 0 8px; }
+.q .opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.q .opts button { font: 500 14.5px "Barlow", sans-serif; border: 1.5px solid var(--line); background: var(--bg-soft); color: var(--ink); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+.q .opts button:hover:not(:disabled) { border-color: var(--main); }
+.q .opts button.right { background: var(--ok); border-color: var(--ok); color: #fff; }
+.q .opts button.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+.q .fb { margin-top: 8px; font-size: 15px; display: none; }
+.q.answered .fb { display: block; }
+.score { font-weight: 600; font-size: 18px; }
+
+/* ---------- Try ---------- */
+.ex { counter-increment: ex; }
+.ex h3::before { content: "Übung " counter(ex) " · "; color: var(--ink-3); }
+.copywrap { position: relative; }
+.copy { position: absolute; top: 6px; right: 6px; font: 500 12.5px "Barlow", sans-serif; background: var(--bg-card); border: 1px solid var(--line); color: var(--ink-2); border-radius: 3px; padding: 2px 8px; cursor: pointer; }
+.copywrap pre { padding-right: 70px; white-space: pre-wrap; overflow-wrap: anywhere; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin: 6px 0; }
+.dl { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 12px 0; }
+.kitlist { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 10px; }
+.kitlist div { border-left: 5px solid var(--k); background: var(--bg-soft); padding: 8px 12px; border-radius: 4px; font-size: 15px; }
+.kitlist code { font-size: 13px; }
+
+dl.gloss { display: grid; grid-template-columns: minmax(130px, max-content) 1fr; gap: 6px 16px; }
+dl.gloss dt { font-weight: 600; }
+dl.gloss dd { margin: 0; }
+@media (max-width: 560px) { dl.gloss { grid-template-columns: 1fr; } dl.gloss dd { margin-bottom: 8px; } }
+
+footer { margin-top: 50px; background: var(--bg-soft); border-top: 1px solid var(--line); font-size: 14.5px; color: var(--ink-3); }
+footer .wrap { padding-top: 18px; padding-bottom: 22px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+.theme-btn { background: none; border: 1px solid var(--line); color: var(--ink-2); border-radius: 3px; padding: 1px 8px; font: inherit; font-size: 13px; cursor: pointer; }
+</style>
+</head>
+<body class="einsteiger">
+
+<div class="topbar"><div class="wrap">
+  <span>OVGU Magdeburg · Professur für Ingenieurpädagogik und Didaktik der technischen Bildung</span>
+  <span><a href="https://ovgu-vet-teched.github.io/IngP-d_Labor_WiSe_2026_2027/">← zur Kursseite IngPäd-Labor</a> · <button class="theme-btn" id="themeBtn" type="button">Hell/Dunkel</button></span>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker">KI verstehen · Lerneinheit</div>
+  <h1>Prompt-Arten verstehen</h1>
+  <p>Vom Chat zum KI-Agenten: Was steckt hinter <b>Interaktions-, System-, Skill-, Harness-, Loop- und Wiki-Prompts</b>? Und warum ist das, was Sie eintippen, nur ein kleiner Teil dessen, was das Sprachmodell tatsächlich „liest“?</p>
+  <div class="level" role="group" aria-label="Lernniveau wählen">
+    <button type="button" data-level="einsteiger" aria-pressed="true"><strong>🌱 Einsteiger:in</strong><span>Ohne Vorkenntnisse. Alltagsvergleiche, Übungen direkt im Chat (z. B. HAWKI).</span></button>
+    <button type="button" data-level="fortgeschritten" aria-pressed="false"><strong>🔧 Fortgeschritten</strong><span>Zusätzlich Technik-Details, Dateiformate und ein Starter-Kit für VS Code + Ollama.</span></button>
+  </div>
+</div></header>
+
+<nav class="toc" aria-label="Inhalt"><div class="wrap">
+  <a href="#bild">Das große Bild</a><a href="#arten">Sechs Prompt-Arten</a><a href="#simulation">Simulation</a><a href="#vergleich">Vergleich</a><a href="#quiz">Quiz</a><a href="#ausprobieren">Ausprobieren</a><a href="#glossar">Glossar</a>
+  <span class="lvl-badge" id="lvlBadge">Modus: 🌱 Einsteiger:in</span>
+</div></nav>
+
+<main class="wrap">
+
+<!-- ======================= 1 · Das große Bild ======================= -->
+<section id="bild">
+  <h2>1 · Das große Bild</h2>
+  <p class="lead">Ein Sprachmodell hat kein Gedächtnis und keine Hände. Es bekommt bei jeder Antwort einen großen Textblock – das <b>Kontextfenster</b> – und schreibt den wahrscheinlichsten Text dazu. Die sechs Prompt-Arten beschreiben, <b>wer</b> welchen Teil dieses Textblocks schreibt und <b>wann</b> er hineinkommt.</p>
+
+  <div class="box beg nur-einsteiger" style="margin-bottom:16px">
+    <p style="margin:0">Stellen Sie sich das Modell als <b>neue Auszubildende</b> vor: sehr belesen, aber mit zwei Schwächen. Sie vergisst über Nacht alles, und sie kann ohne Werkstatt nichts anfassen. Damit sie trotzdem gute Arbeit macht, braucht sie einen Auftrag, Betriebsregeln, Arbeitsanweisungen, eine Werkstatt, eine Qualitätsprüfung und ein Berichtsheft. Genau das sind die sechs Prompt-Arten.</p>
+  </div>
+
+  <p class="muted">👉 Klicken Sie auf die Bereiche im Bild.</p>
+  <div class="picture">
+    <div>
+      <div class="layer harness" data-type="harn" tabindex="0" role="button" aria-label="Harness">
+        <div class="lbl">🏭 Harness <small>die Software rund um das Modell, z. B. ein Coding-Agent</small></div>
+        <div class="tools"><span>📄 Datei lesen</span><span>✏️ Datei schreiben</span><span>🔍 Websuche</span><span>▶️ Programm starten</span><span>🛡️ Berechtigungen</span></div>
+        <div class="layer loop" data-type="loop" tabindex="0" role="button" aria-label="Loop">
+          <div class="lbl">🔁 Loop <small>wiederholen, prüfen, verbessern</small></div>
+          <div class="loopinner">
+            <div class="ctx">
+              <div class="lbl">📜 Kontextfenster: das liest das Modell</div>
+              <div class="slot sys layer" data-type="sys" tabindex="0" role="button"><b>Systemprompt</b> · Rolle und Regeln</div>
+              <div class="slot skill layer" data-type="skill" tabindex="0" role="button"><b>Skill</b> · passende Arbeitsanweisung</div>
+              <div class="slot wiki layer" data-type="wiki" tabindex="0" role="button"><b>Wiki</b> · gespeichertes Wissen</div>
+              <div class="slot hist">bisheriger Gesprächsverlauf …</div>
+              <div class="slot int layer" data-type="int" tabindex="0" role="button"><b>Interaktionsprompt</b> · Ihre Nachricht</div>
+            </div>
+            <div class="model">Sprach&shy;modell<small>schreibt den wahrscheinlichsten Text</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info" aria-live="polite"><div class="box" id="infoBox"></div></div>
+  </div>
+</section>
+
+<!-- ======================= 2 · Die sechs Arten ======================= -->
+<section id="arten">
+  <h2>2 · Die sechs Prompt-Arten im Detail</h2>
+  <div class="tabs" role="tablist" aria-label="Prompt-Arten">
+    <button role="tab" id="tab-int" aria-controls="p-int" aria-selected="true" style="--k:var(--c-int)"><span class="dot"></span>Interaktion</button>
+    <button role="tab" id="tab-sys" aria-controls="p-sys" aria-selected="false" style="--k:var(--c-sys)"><span class="dot"></span>System</button>
+    <button role="tab" id="tab-skill" aria-controls="p-skill" aria-selected="false" style="--k:var(--c-skill)"><span class="dot"></span>Skill</button>
+    <button role="tab" id="tab-harn" aria-controls="p-harn" aria-selected="false" style="--k:var(--c-harn)"><span class="dot"></span>Harness</button>
+    <button role="tab" id="tab-loop" aria-controls="p-loop" aria-selected="false" style="--k:var(--c-loop)"><span class="dot"></span>Loop</button>
+    <button role="tab" id="tab-wiki" aria-controls="p-wiki" aria-selected="false" style="--k:var(--c-wiki)"><span class="dot"></span>Wiki</button>
+  </div>
+
+  <!-- Interaktion -->
+  <div class="panel" role="tabpanel" id="p-int" aria-labelledby="tab-int" style="--k:var(--c-int)">
+    <p class="one">Der <b>Interaktionsprompt</b> ist die Nachricht, die Sie selbst in das Chatfenster tippen: ein konkreter Auftrag für genau diesen Moment.</p>
+    <div class="facts">
+      <div><b>Wer schreibt ihn?</b>Sie als Nutzer:in</div>
+      <div><b>Wann wirkt er?</b>für die aktuelle Antwort (bleibt im Verlauf)</div>
+      <div><b>Sichtbar?</b>ja, für Sie</div>
+      <div><b>Andere Namen</b>User-Prompt, Eingabe, Anfrage</div>
+    </div>
+    <div class="analogy"><span class="ico">🗣️</span><div><b>In der Werkstatt:</b> der mündliche Arbeitsauftrag der Meisterin: „Bau bitte die Reihenschaltung auf Platz 3 auf.“</div></div>
+    <div class="example"><b>Beispiel</b><pre><code>Erstelle 5 Quizfragen zum Thema Schutzleiter für Elektroniker:innen
+im 1. Ausbildungsjahr. Format: Multiple Choice, eine richtige Antwort.</code></pre></div>
+    <p>Gute Interaktionsprompts enthalten <b>Rolle · Aufgabe · Kontext · Format · Beispiele</b> (Sie kennen das aus der KI-Einführung). Aber: Ein Interaktionsprompt allein muss <i>alles</i> mitbringen. Was nicht drinsteht, muss das Modell raten.</p>
+    <div class="box adv nur-fortgeschritten">
+      <p>Technisch ist der Interaktionsprompt eine Nachricht mit der Rolle <code>user</code>. Sprachmodelle sind <b>zustandslos</b>: Bei jeder neuen Nachricht schickt die App den <i>gesamten</i> bisherigen Verlauf erneut mit. Ein „Gedächtnis“ im Chat entsteht nur dadurch.</p>
+<pre><code>POST /api/chat
+{
+  "model": "gemma4:e2b",
+  "messages": [
+    { "role": "user",      "content": "Was ist ein Schutzleiter?" },
+    { "role": "assistant", "content": "Ein Schutzleiter ist …" },
+    { "role": "user",      "content": "Und warum ist er grün-gelb?" }   ← neuer Interaktionsprompt
+  ]
+}</code></pre>
+      <p class="muted">Folge: Lange Chats füllen das Kontextfenster. Irgendwann wird gekürzt oder zusammengefasst, und frühe Details gehen verloren.</p>
+    </div>
+    <div class="warn"><b>Typischer Fehler:</b> „Mach mal ein Arbeitsblatt.“ Ohne Zielgruppe, Thema und Format wird die Antwort beliebig.</div>
+  </div>
+
+  <!-- System -->
+  <div class="panel" role="tabpanel" id="p-sys" aria-labelledby="tab-sys" style="--k:var(--c-sys)" hidden>
+    <p class="one">Der <b>Systemprompt</b> steht <i>vor</i> dem ganzen Gespräch. Er legt fest, <b>wer</b> das Modell sein soll, <b>wie</b> es antwortet und welche <b>Regeln</b> immer gelten.</p>
+    <div class="facts">
+      <div><b>Wer schreibt ihn?</b>Anbieter der App, Lehrende, Entwickler:innen, teils Sie selbst („Eigene Anweisungen“)</div>
+      <div><b>Wann wirkt er?</b>bei jeder Antwort der Sitzung</div>
+      <div><b>Sichtbar?</b>meist nicht</div>
+      <div><b>Andere Namen</b>Systemnachricht, Custom Instructions, Persona</div>
+    </div>
+    <div class="analogy"><span class="ico">📋</span><div><b>In der Werkstatt:</b> Ausbildungsvertrag und Betriebsordnung. Sie gelten jeden Tag, ohne dass die Meisterin sie bei jedem Auftrag wiederholt.</div></div>
+    <div class="example"><b>Beispiel</b><pre><code>Du bist ein Lernbegleiter für Auszubildende in gewerblich-technischen Berufen.
+- Antworte auf Deutsch in einfacher Sprache (B1), höchstens 6 Stichpunkte.
+- Verweise bei Arbeitsschutz immer auf die Prüfung durch die Lehrkraft.
+- Wenn du unsicher bist, sag es.</code></pre></div>
+    <p>Jede Chat-App hat einen Systemprompt, auch wenn Sie ihn nie sehen. Er erklärt, warum dieselbe Frage in zwei Apps unterschiedlich beantwortet wird. Wenn Sie für Ihre Lernenden einen <b>eigenen KI-Assistenten</b> einrichten, schreiben Sie den Systemprompt.</p>
+    <div class="box adv nur-fortgeschritten">
+      <p>Rolle <code>system</code>, immer an erster Stelle der Nachrichtenliste. Modelle sind darauf trainiert, System-Anweisungen höher zu gewichten als Nutzernachrichten (<i>Instruction Hierarchy</i>). Das ist aber kein sicherer Schutz: Mit <b>Prompt-Injection</b> („Ignoriere alle vorherigen Anweisungen …“) wird versucht, ihn auszuhebeln.</p>
+<pre><code>[
+  { "role": "system", "content": "Du bist ein Lernbegleiter … (Regeln)" },
+  { "role": "user",   "content": "Wie gehe ich sicher mit einem Lötkolben um?" }
+]</code></pre>
+      <p class="muted">Im Starter-Kit: <code>02_systemprompt.py</code> stellt dieselbe Frage ohne und mit Systemprompt.</p>
+    </div>
+    <div class="warn"><b>Typischer Fehler:</b> Ein Systemprompt mit 80 Regeln. Je länger und widersprüchlicher, desto eher werden einzelne Regeln übersehen.</div>
+  </div>
+
+  <!-- Skill -->
+  <div class="panel" role="tabpanel" id="p-skill" aria-labelledby="tab-skill" style="--k:var(--c-skill)" hidden>
+    <p class="one">Ein <b>Skillprompt</b> ist eine abgelegte Anleitung für eine bestimmte Aufgabe. Das Modell kennt zunächst nur <b>Titel und Kurzbeschreibung</b> aller Skills und lädt die vollständige Anleitung erst, <b>wenn sie gebraucht wird</b>.</p>
+    <div class="facts">
+      <div><b>Wer schreibt ihn?</b>Fachleute, Lehrende, Teams: einmal, für viele Anwendungen</div>
+      <div><b>Wann wirkt er?</b>nur wenn die Aufgabe passt</div>
+      <div><b>Sichtbar?</b>als Datei/Ordner: ja</div>
+      <div><b>Andere Namen</b>Agent Skill, Fähigkeit, Arbeitsanweisung</div>
+    </div>
+    <div class="analogy"><span class="ico">📚</span><div><b>In der Werkstatt:</b> das Regal mit Arbeitsanweisungen. Auf jedem Ordnerrücken steht, wofür er ist („Gefährdungsbeurteilung“, „Lötstelle prüfen“). Aufgeschlagen wird nur der Ordner, der gerade gebraucht wird.</div></div>
+    <div class="example"><b>Beispiel: Ordner <code>gefaehrdungsbeurteilung/SKILL.md</code></b><pre><code>---
+name: gefaehrdungsbeurteilung
+description: Erstellt eine kurze Gefährdungsbeurteilung für einen Laboraufbau.
+             Nutzen, wenn nach Gefährdungen oder Schutzmaßnahmen gefragt wird.
+---
+1. Tabelle: Gefährdung | Ursache | Schutzmaßnahme (T-O-P) | Rechtsgrundlage
+2. Rechtsgrundlagen nur nennen, wenn sicher, sonst „bitte prüfen“.
+3. Schlusssatz: „KI-Entwurf, muss fachkundig geprüft werden.“</code></pre></div>
+    <p>Der Unterschied zum Systemprompt: Ein Systemprompt gilt <b>immer</b>. Ein Skill ist <b>Spezialwissen auf Abruf</b>. So kann ein Assistent hunderte Skills haben, ohne dass sein Kontextfenster überläuft.</p>
+    <div class="box adv nur-fortgeschritten">
+      <p>Prinzip <b>Progressive Disclosure</b> (schrittweises Aufdecken):</p>
+      <ol>
+        <li>Im Kontext steht nur der <b>Katalog</b>: <code>name</code> + <code>description</code> aus dem YAML-Kopf jeder <code>SKILL.md</code> (wenige Dutzend Token pro Skill).</li>
+        <li>Passt eine Aufgabe, lädt der Agent den <b>Inhalt</b> der <code>SKILL.md</code>.</li>
+        <li>Bei Bedarf liest er weitere <b>Dateien im Skill-Ordner</b> (Vorlagen, Beispiele, Skripte).</li>
+      </ol>
+      <p>Das Format „Agent Skills“ (Ordner mit <code>SKILL.md</code>) wird von mehreren Agenten-Werkzeugen unterstützt, z. B. Claude, GitHub Copilot in VS Code oder OpenAI Codex. Entscheidend für die Auswahl ist die <b>description</b>: Sie sagt, <i>wann</i> der Skill genutzt werden soll.</p>
+      <p class="muted">Im Starter-Kit: <code>03_skillprompt.py</code> zeigt beide Schritte, Katalog und Nachladen, farbig im Terminal.</p>
+    </div>
+    <div class="warn"><b>Typischer Fehler:</b> Eine vage Beschreibung („Hilft bei Dokumenten“). Dann wird der Skill nie oder zur falschen Zeit gewählt.</div>
+  </div>
+
+  <!-- Harness -->
+  <div class="panel" role="tabpanel" id="p-harn" aria-labelledby="tab-harn" style="--k:var(--c-harn)" hidden>
+    <p class="one">Die <b>Harness</b> ist die Software <i>um</i> das Sprachmodell herum. Sie gibt ihm Werkzeuge und setzt Grenzen. Der <b>Harness-Prompt</b> ist der Text, mit dem sie dem Modell erklärt, was es tun darf, was es gerade „sieht“ und wie es Werkzeuge anfordert.</p>
+    <div class="facts">
+      <div><b>Wer schreibt ihn?</b>Hersteller der Agenten-Software</div>
+      <div><b>Wann wirkt er?</b>während der ganzen Arbeit des Agenten</div>
+      <div><b>Sichtbar?</b>nein, er wird automatisch zusammengesetzt</div>
+      <div><b>Beispiele</b>Claude Code, GitHub Copilot (Agent-Modus), Cursor, Cline</div>
+    </div>
+    <div class="analogy"><span class="ico">🏭</span><div><b>In der Werkstatt:</b> die Werkstatt selbst, mit Werkbank, Werkzeugschrank, Not-Aus und Zugangsregeln. Ohne Werkstatt kann die Auszubildende nur <i>erklären</i>, wie man lötet. In der Werkstatt kann sie es <i>tun</i>, aber nur mit den Werkzeugen, die dort liegen, und nur in ihrem Bereich.</div></div>
+    <p>Wichtig: Das Modell selbst kann nur Text schreiben. Wenn es „eine Datei speichert“, schreibt es eigentlich: <i>„Bitte Werkzeug <code>schreibe_datei</code> mit Inhalt X“</i>. Die <b>Harness</b> führt das aus, prüft die Berechtigung und meldet das Ergebnis zurück. Das wiederholt sich, bis die Aufgabe erledigt ist.</p>
+    <div class="example"><b>Beispiel: Ausschnitt eines Harness-Prompts</b><pre><code>Du arbeitest in einer Arbeitsumgebung. Heutiges Datum: 27.10.2026.
+Dein Arbeitsordner enthält: laborauftrag.txt
+Verfügbare Werkzeuge:
+- lies_datei {"name": …}        – liest eine Datei
+- schreibe_datei {"name": …, "inhalt": …}
+- fertig {"zusammenfassung": …}
+Regeln: Lies Dateien, bevor du über sie schreibst. Nur im Arbeitsordner arbeiten.</code></pre></div>
+    <div class="box adv nur-fortgeschritten">
+      <p>Eine Harness besteht typischerweise aus: <b>Werkzeugdefinitionen</b> (Name, Beschreibung, JSON-Schema der Argumente) · <b>Umgebungsinfos</b> (Datum, Betriebssystem, Ordner) · <b>Verhaltensregeln</b> · <b>Berechtigungssystem</b> (Was darf ohne Rückfrage passieren?) · <b>Kontextverwaltung</b> (Verlauf kürzen, Dateien nachladen) · der <b>Agentenschleife</b>:</p>
+<pre><code>nachrichten = [harness_prompt, aufgabe]
+while schritte &lt; MAX:
+    antwort = modell(nachrichten)            # Modell schlägt Aktion vor
+    if antwort.werkzeug == "fertig": break
+    if not erlaubt(antwort): frage_nutzer()  # Harness setzt Grenzen
+    ergebnis = fuehre_aus(antwort.werkzeug)  # Harness handelt
+    nachrichten += [antwort, ergebnis]       # Ergebnis zurück ins Kontextfenster</code></pre>
+      <p>Systemprompt, Skill-Katalog und Projektdateien werden von der Harness in den Kontext eingebaut. Die Harness ist also der „Dirigent“ aller anderen Prompt-Arten. Kleine Modelle scheitern oft genau hier: falsche Werkzeugnamen, kaputtes JSON, Endlosschleifen.</p>
+      <p class="muted">Im Starter-Kit: <code>04_harness.py</code> ist eine komplette Mini-Harness in ca. 100 Zeilen Python.</p>
+    </div>
+    <div class="warn"><b>Merke:</b> Je mehr Werkzeuge eine Harness freigibt (Dateien löschen, E-Mails senden), desto wichtiger sind Grenzen und menschliche Freigaben.</div>
+  </div>
+
+  <!-- Loop -->
+  <div class="panel" role="tabpanel" id="p-loop" aria-labelledby="tab-loop" style="--k:var(--c-loop)" hidden>
+    <p class="one">Ein <b>Loop-Prompt</b> ist ein Auftrag, der <b>wiederholt</b> ausgeführt wird: so lange, bis ein <b>Prüfkriterium</b> erfüllt ist, oder in festen Abständen. Jede Runde baut auf dem Ergebnis der vorherigen auf.</p>
+    <div class="facts">
+      <div><b>Wer schreibt ihn?</b>Sie oder die Entwickler:innen eines Agenten</div>
+      <div><b>Wann wirkt er?</b>in jeder Runde neu</div>
+      <div><b>Kernbestandteile</b>Ziel · Prüfkriterien · Rückmeldung · Abbruchregel</div>
+      <div><b>Verwandt</b>PDCA-Zyklus, iteratives Prompting</div>
+    </div>
+    <div class="analogy"><span class="ico">📏</span><div><b>In der Werkstatt:</b> Werkstück fertigen → messen → nachbessern → wieder messen, bis die Toleranz eingehalten ist. Und nach drei Fehlversuchen holt man die Meisterin.</div></div>
+    <div class="example"><b>Beispiel</b><pre><code>Überarbeite das Arbeitsblatt, bis ALLE Kriterien erfüllt sind:
+1. Überschrift in Zeile 1   2. genau 5 nummerierte Aufgaben
+3. Abschnitt „Sicherheitshinweis“   4. höchstens 220 Wörter
+Hier ist der aktuelle Stand: {stand}
+Rückmeldung der letzten Prüfung: {rueckmeldung}
+Höchstens 5 Runden. Danach an einen Menschen übergeben.</code></pre></div>
+    <p>Sie kennen das Prinzip aus dem iterativen Prompting („Überarbeite …“). Beim Loop-Prompt ist die Wiederholung <b>eingeplant</b>: Die Kriterien stehen vorher fest, und es gibt eine <b>Abbruchregel</b>, damit die Schleife nicht endlos läuft.</p>
+    <div class="box adv nur-fortgeschritten">
+      <p>Zwei Formen begegnen Ihnen in Agenten-Werkzeugen:</p>
+      <ul>
+        <li><b>Ziel-Loop:</b> Derselbe Prompt wird immer wieder gestartet, der Fortschritt steht in Dateien (z. B. eine To-do-Liste). Eine Prüfung entscheidet über das Ende, idealerweise <b>automatisiert</b> (Tests, Checkliste per Skript), nicht durch das Modell selbst. In der Entwickler-Community heißt das Muster auch „Ralph-Loop“.</li>
+        <li><b>Zeit-Loop:</b> Ein Prompt läuft in Intervallen, z. B. „Prüfe alle 30 Minuten, ob neue Abgaben im Ordner liegen“ (in Claude Code etwa mit <code>/loop</code>).</li>
+      </ul>
+<pre><code># Ziel-Loop in der Shell (vereinfacht)
+for runde in 1 2 3 4 5; do
+  ollama run gemma4:e2b "$(cat LOOP_PROMPT.md) $(cat stand.md) $(cat rueckmeldung.txt)" &gt; stand.md
+  python pruefe.py stand.md &gt; rueckmeldung.txt &amp;&amp; break   # Prüfung bestanden → Ende
+done</code></pre>
+      <p class="muted">Im Starter-Kit: <code>05_loop.py</code>, mit einer Python-Prüffunktion, die Sie selbst erweitern können.</p>
+    </div>
+    <div class="warn"><b>Typischer Fehler:</b> Das Modell prüft sich selbst („Ist dein Text gut? – Ja.“). Gute Loops prüfen mit einer unabhängigen Instanz: Checkliste, Programm oder Mensch.</div>
+  </div>
+
+  <!-- Wiki -->
+  <div class="panel" role="tabpanel" id="p-wiki" aria-labelledby="tab-wiki" style="--k:var(--c-wiki)" hidden>
+    <p class="one">Ein <b>Wiki-Prompt</b> legt fest, wie ein KI-Agent eine <b>dauerhafte Wissenssammlung</b> aufbaut und pflegt: Markdown-Seiten, die über viele Sitzungen hinweg wachsen. Das Wiki ist das <b>Langzeitgedächtnis</b>, das dem Modell selbst fehlt.</p>
+    <div class="facts">
+      <div><b>Wer schreibt ihn?</b>Sie bzw. das Team, einmalig. Das Wiki selbst schreibt dann die KI mit.</div>
+      <div><b>Wann wirkt er?</b>beim Einlesen neuer Quellen und beim Nachschlagen</div>
+      <div><b>Sichtbar?</b>ja, das Wiki sind normale Dateien</div>
+      <div><b>Verwandt</b>Projektdateien wie <code>AGENTS.md</code>, Memory, Wissensdatenbank</div>
+    </div>
+    <div class="analogy"><span class="ico">📓</span><div><b>In der Werkstatt:</b> das Berichtsheft bzw. das Werkstatt-Wiki. Was heute gelernt wurde, wird ordentlich aufgeschrieben, und morgen liest man nach, statt alles neu zu erfragen.</div></div>
+    <div class="example"><b>Beispiel</b><pre><code>Du pflegst das Wiki unseres Seminars.
+- Eine Seite pro Begriff (z. B. top-prinzip.md).
+- Aufbau: Titel · Definition in 1–2 Sätzen · Kernpunkte · Quelle.
+- Verlinke verwandte Seiten so: [[sicherheitsunterweisung]].
+- Aktualisiere nach jeder neuen Quelle das Inhaltsverzeichnis index.md.
+- Schreibe nur, was in der Quelle steht.</code></pre></div>
+    <p>Der Unterschied zum Skill: Ein Skill sagt, <b>wie</b> man eine Aufgabe erledigt (Verfahren). Ein Wiki speichert, <b>was</b> man über ein Thema weiß (Fakten, Begriffe, Entscheidungen). Und: Das Wiki wird von der KI <b>selbst weitergeschrieben</b>.</p>
+    <div class="box adv nur-fortgeschritten">
+      <p>Das Muster wurde unter dem Namen „LLM-Wiki“ bekannt (eine Idee von Andrej Karpathy). Typischer Aufbau:</p>
+<pre><code>quellen/        ← Rohmaterial (PDFs, Notizen, Texte), wird nie verändert
+wiki/           ← von der KI gepflegte Seiten + index.md
+WIKI_PROMPT.md  ← die Regeln: Aufbau, Benennung, Verlinkung, Pflege</code></pre>
+      <p><b>Wiki statt reiner Suche (RAG):</b> Bei klassischer Dokumentensuche werden bei jeder Frage Textschnipsel aus den Rohquellen gesucht. Beim Wiki wird das Wissen <b>einmal sauber verarbeitet</b>, verknüpft und gepflegt, und Widersprüche fallen beim Einpflegen auf. Projektdateien wie <code>AGENTS.md</code> oder <code>CLAUDE.md</code> sind eine kleine Form davon: Agenten lesen sie bei jedem Start und ergänzen sie.</p>
+      <p class="muted">Im Starter-Kit: <code>06_wiki.py einlesen</code> und <code>06_wiki.py frage "…"</code>.</p>
+    </div>
+    <div class="warn"><b>Typischer Fehler:</b> Das Wiki ungeprüft wachsen lassen. Auch hier kann die KI Fehler einschleusen, die dann „dauerhaft“ werden. Stichproben gegen die Quellen sind Pflicht.</div>
+  </div>
+</section>
+
+<!-- ======================= 3 · Simulation ======================= -->
+<section id="simulation">
+  <h2>3 · Simulation: Schicht für Schicht zur besseren Antwort</h2>
+  <p class="lead">Derselbe Auftrag, sechsmal. Mit jedem Schritt kommt eine Prompt-Art dazu. Links sehen Sie, was im Kontextfenster steht, rechts, wie sich das Ergebnis verändert.</p>
+  <p class="muted">Die Antworten sind vereinfachte, typische Beispiele zur Veranschaulichung, keine echten Modellausgaben.</p>
+  <div class="stepper-nav" id="stepNav" role="tablist" aria-label="Simulationsschritte"></div>
+  <div class="sim">
+    <div><h3>Kontextfenster</h3><div id="simCtx"></div></div>
+    <div><h3>Ergebnis</h3><div class="out" id="simOut"></div><div class="verdict" id="simVerdict"></div></div>
+  </div>
+  <div class="stepbtns"><button class="btn ghost" id="prevStep" type="button">← zurück</button><button class="btn" id="nextStep" type="button">Nächste Schicht →</button></div>
+</section>
+
+<!-- ======================= 4 · Vergleich ======================= -->
+<section id="vergleich">
+  <h2>4 · Alle sechs auf einen Blick</h2>
+  <div class="table-scroll"><table class="cmp">
+    <thead><tr><th></th>
+      <th style="--k:var(--c-int)">Interaktion</th><th style="--k:var(--c-sys)">System</th><th style="--k:var(--c-skill)">Skill</th><th style="--k:var(--c-harn)">Harness</th><th style="--k:var(--c-loop)">Loop</th><th style="--k:var(--c-wiki)">Wiki</th></tr></thead>
+    <tbody>
+      <tr><th>Leitfrage</th><td>Was soll <i>jetzt</i> passieren?</td><td>Wer bin ich, welche Regeln gelten?</td><td>Wie erledige ich <i>diese Art</i> Aufgabe?</td><td>Was kann und darf ich tun?</td><td>Wann bin ich fertig?</td><td>Was wissen wir schon?</td></tr>
+      <tr><th>Wer schreibt?</th><td>Nutzer:in</td><td>Anbieter / Lehrende</td><td>Fachleute, Team</td><td>Software-Hersteller</td><td>Nutzer:in / Entwickler:in</td><td>Team + KI gemeinsam</td></tr>
+      <tr><th>Gültigkeit</th><td>eine Nachricht</td><td>ganze Sitzung</td><td>bei passender Aufgabe</td><td>ganze Agenten-Arbeit</td><td>pro Runde, bis Ziel</td><td>dauerhaft, über Sitzungen</td></tr>
+      <tr><th>Im Kontext?</th><td>immer</td><td>immer</td><td>Katalog immer, Inhalt bei Bedarf</td><td>immer (unsichtbar)</td><td>jede Runde neu</td><td>Index + passende Seiten</td></tr>
+      <tr><th>Werkstatt-Bild</th><td>🗣️ Arbeitsauftrag</td><td>📋 Betriebsordnung</td><td>📚 Arbeitsanweisung</td><td>🏭 Werkstatt</td><td>📏 Messen &amp; Nachbessern</td><td>📓 Berichtsheft</td></tr>
+      <tr><th>Im Chat (HAWKI) nachbildbar?</th><td>✔ ja</td><td>✔ als erste Nachricht</td><td>✔ als eingefügter Text</td><td>✘ braucht Agenten-Software</td><td>◐ von Hand</td><td>◐ eigenes Dokument einfügen</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ======================= 5 · Quiz ======================= -->
+<section id="quiz">
+  <h2>5 · Quiz: Welche Prompt-Art ist das?</h2>
+  <p>Ordnen Sie jede Situation einer Prompt-Art zu. Sie erhalten sofort eine Rückmeldung.</p>
+  <p class="score" id="score">0 von 0 richtig</p>
+  <div class="quiz" id="quizBox"></div>
+  <p><button class="btn ghost" id="quizReset" type="button">Quiz zurücksetzen</button></p>
+</section>
+
+<!-- ======================= 6 · Ausprobieren ======================= -->
+<section id="ausprobieren">
+  <h2>6 · Selbst ausprobieren</h2>
+
+  <!-- Einsteiger -->
+  <div class="nur-einsteiger" style="counter-reset: ex">
+    <p class="lead">Fünf Übungen, die Sie <b>ohne Installation</b> in einem Chat-Werkzeug wie <b>HAWKI</b> durchführen. Kopieren Sie die Texte mit dem Knopf und ersetzen Sie die «Platzhalter».</p>
+    <div class="grid2">
+      <div class="box ex"><h3>Interaktion vs. System</h3>
+        <p>Stellen Sie zuerst nur diese Frage in einem neuen Chat:</p>
+        <div class="copywrap"><button class="copy" type="button">Kopieren</button><pre>Wie gehe ich sicher mit einem Lötkolben um?</pre></div>
+        <p>Öffnen Sie dann einen <b>neuen</b> Chat. Falls es ein Feld für „Anweisungen“ oder „Systemprompt“ gibt, fügen Sie dies dort ein, sonst als erste Nachricht:</p>
+        <div class="copywrap"><button class="copy" type="button">Kopieren</button><pre>Für dieses ganze Gespräch gilt: Du bist Lernbegleiter für Auszubildende im 1. Ausbildungsjahr Elektrotechnik. Antworte in einfacher Sprache, höchstens 6 Stichpunkte, und verweise bei Sicherheitsthemen auf die Prüfung durch die Lehrkraft. Antworte jetzt nur mit „Verstanden“.</pre></div>
+        <p>Stellen Sie die Frage erneut. <b>Was ist anders?</b></p></div>
+
+      <div class="box ex"><h3>Einen Skill nutzen</h3>
+        <p>Ein Skill ist eine Arbeitsanweisung, die Sie immer wieder verwenden. Speichern Sie diesen Text in einer eigenen Datei und fügen Sie ihn ein, wenn Sie ihn brauchen:</p>
+        <div class="copywrap"><button class="copy" type="button">Kopieren</button><pre>ARBEITSANWEISUNG „Gefährdungsbeurteilung“ – gilt für den folgenden Auftrag:
+1. Tabelle mit Spalten: Gefährdung | Ursache | Schutzmaßnahme (T/O/P) | Rechtsgrundlage
+2. Schutzmaßnahmen nach T-O-P ordnen (technisch vor organisatorisch vor persönlich).
+3. Rechtsgrundlagen nur nennen, wenn du sicher bist, sonst „bitte prüfen“.
+4. Schlusssatz: „KI-Entwurf – muss fachkundig geprüft werden.“
+
+AUFTRAG: Erstelle eine Gefährdungsbeurteilung für «Ihren Laboraufbau».</pre></div>
+        <p>Probieren Sie den Auftrag auch <b>ohne</b> die Anweisung. Was liefert der Skill zusätzlich?</p></div>
+
+      <div class="box ex"><h3>Loop von Hand</h3>
+        <p>Lassen Sie ein Arbeitsblatt erstellen. Schicken Sie dann diesen Prüfauftrag und wiederholen Sie ihn, bis alles erfüllt ist (höchstens 3-mal):</p>
+        <div class="copywrap"><button class="copy" type="button">Kopieren</button><pre>Prüfe dein letztes Arbeitsblatt Punkt für Punkt gegen diese Checkliste und schreibe zu jedem Punkt „erfüllt“ oder „nicht erfüllt“:
+1. Überschrift vorhanden
+2. genau 5 nummerierte Aufgaben
+3. Abschnitt „Sicherheitshinweis“
+4. höchstens 220 Wörter
+Gib danach das vollständig überarbeitete Arbeitsblatt aus.</pre></div>
+        <p>Zählen Sie selbst nach: Stimmt die Selbstprüfung des Modells? <i>(Oft nicht! Deshalb prüfen gute Loops unabhängig.)</i></p></div>
+
+      <div class="box ex"><h3>Ihr eigenes Kurs-Wiki</h3>
+        <p>Legen Sie ein Dokument „Mein Kurs-Wiki“ an. Am Ende einer Chat-Sitzung:</p>
+        <div class="copywrap"><button class="copy" type="button">Kopieren</button><pre>Hier ist mein bisheriges Kurs-Wiki: «Wiki-Text einfügen oder „leer“»
+Ergänze es um die wichtigsten Begriffe aus unserem heutigen Gespräch.
+Regeln: ein Abschnitt pro Begriff, Definition in 1–2 Sätzen, 3 Kernpunkte, keine erfundenen Inhalte. Gib das vollständige Wiki aus.</pre></div>
+        <p>Speichern Sie das Ergebnis. Fügen Sie das Wiki beim nächsten Mal zu Beginn ein. Jetzt „erinnert“ sich die KI.</p></div>
+
+      <div class="box ex"><h3>Nachdenken über die Harness</h3>
+        <p>Eine Harness können Sie im normalen Chat nicht nachbauen, denn dort kann die KI nur schreiben, nicht handeln. Überlegen Sie stattdessen:</p>
+        <ul>
+          <li>Welche <b>Werkzeuge</b> bräuchte ein KI-Agent, der Ihnen bei der Vorbereitung eines Laborversuchs hilft?</li>
+          <li>Welche davon würden Sie <b>ohne Rückfrage</b> erlauben, welche <b>nie</b>?</li>
+          <li>Was sollte er tun, wenn er nach 10 Schritten nicht fertig ist?</li>
+        </ul>
+        <p class="muted">Neugierig geworden? Schalten Sie oben auf <b>🔧 Fortgeschritten</b>: Dort gibt es ein Starter-Kit, mit dem Sie eine echte Mini-Harness laufen lassen.</p></div>
+    </div>
+  </div>
+
+  <!-- Fortgeschritten -->
+  <div class="nur-fortgeschritten">
+    <p class="lead">Das <b>Prompt-Labor Starter-Kit</b>: sechs kleine Python-Experimente, eines pro Prompt-Art. Sie laufen mit einem Sprachmodell, das <b>lokal auf Ihrem Laptop</b> arbeitet (Ollama). Keine Cloud, keine Kosten, keine Daten verlassen den Rechner.</p>
+    <div class="dl">
+      <a class="btn" href="downloads/prompt-labor.zip" download>⬇ Starter-Kit herunterladen (.zip)</a>
+      <a class="btn ghost" href="https://github.com/OVGU-VET-TechEd/KI_Promptarten/tree/main/kit/prompt-labor" target="_blank" rel="noopener">Quellcode auf GitHub ansehen</a>
+    </div>
+
+    <div class="grid2">
+      <div class="box">
+        <h3 style="margin-top:0">Einrichtung (einmalig, ca. 20 Min.)</h3>
+        <ol class="steps">
+          <li><b>Ollama</b> installieren: <a href="https://ollama.com/download" target="_blank" rel="noopener">ollama.com/download</a>. Danach läuft es im Hintergrund.</li>
+          <li><b>Modell laden</b> im Terminal:
+            <div class="copywrap"><button class="copy" type="button">Kopieren</button><pre>ollama pull gemma4:e2b</pre></div>
+            Test: <code>ollama run gemma4:e2b "Sag Hallo"</code> (Beenden mit <code>/bye</code>)</li>
+          <li><b>Python ≥ 3.10</b> installieren: <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a>. Windows: Häkchen „Add Python to PATH“. Zusatzpakete sind <b>nicht</b> nötig.</li>
+          <li><b>VS Code</b> installieren: <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">code.visualstudio.com</a>, plus Erweiterung „Python“ (wird vorgeschlagen).</li>
+          <li>ZIP entpacken → VS Code → <i>Datei → Ordner öffnen</i> → <code>prompt-labor</code>.</li>
+          <li>Starten: <i>Terminal → Aufgabe ausführen …</i> → z. B. „02 Systemprompt“, oder im Terminal <code>python3 02_systemprompt.py</code> (Windows: <code>python</code>).</li>
+        </ol>
+      </div>
+      <div class="box tint">
+        <h3 style="margin-top:0">Welches Modell?</h3>
+        <ul>
+          <li><code>gemma4:e2b</code>: <b>Standard</b>, für Laptops mit 8–16 GB RAM.</li>
+          <li><code>gemma4:e4b</code>: bessere Ergebnisse, braucht mehr Speicher.</li>
+          <li><code>llama3.2:3b</code>: schnelle, getestete Alternative (ca. 2 GB).</li>
+          <li><code>gemma3:1b</code>: für schwache Rechner (ca. 0,8 GB). Reicht für 01–03, <b>scheitert meist an der Harness (04)</b>. Gerade das ist lehrreich.</li>
+        </ul>
+        <p>Modell wechseln: in <code>ollama_client.py</code> die Zeile <code>MODEL = …</code> ändern oder im Terminal:</p>
+        <div class="copywrap"><button class="copy" type="button">Kopieren</button><pre>export PROMPT_LABOR_MODEL=llama3.2:3b        # macOS/Linux
+$env:PROMPT_LABOR_MODEL="llama3.2:3b"        # Windows PowerShell</pre></div>
+        <p class="muted">Die farbige Ausgabe zeigt immer das komplette Kontextfenster: <span style="color:var(--c-sys)">violett</span> = System, <span style="color:var(--c-int)">blau</span> = Nutzer:in, grün = Modell, gelb = Harness.</p>
+      </div>
+    </div>
+
+    <h3>Die sechs Experimente</h3>
+    <div class="kitlist">
+      <div style="--k:var(--c-int)"><b>01 Interaktion</b> · <code>python3 01_interaktionsprompt.py "Ihr Auftrag"</code><br>Eine einzige Nachricht. Mehr weiß das Modell nicht.</div>
+      <div style="--k:var(--c-sys)"><b>02 System</b> · <code>python3 02_systemprompt.py</code><br>Vorher/nachher-Vergleich. Ändern Sie <code>prompts/SYSTEM_PROMPT.md</code>.</div>
+      <div style="--k:var(--c-skill)"><b>03 Skill</b> · <code>python3 03_skillprompt.py "Mach ein Quiz zu …"</code><br>Katalog → Auswahl → Nachladen. Eigene Skills in <code>skills/</code>.</div>
+      <div style="--k:var(--c-harn)"><b>04 Harness</b> · <code>python3 04_harness.py</code><br>Mini-Agent mit Werkzeugen, Ordner-Sandbox und Schrittlimit.</div>
+      <div style="--k:var(--c-loop)"><b>05 Loop</b> · <code>python3 05_loop.py "Thema"</code><br>Runde für Runde, bis die Python-Prüfung besteht (max. 5).</div>
+      <div style="--k:var(--c-wiki)"><b>06 Wiki</b> · <code>python3 06_wiki.py einlesen</code> · <code>… frage "…"</code><br>Quellen → Wiki-Seiten → Antworten mit Quellenangabe.</div>
+    </div>
+
+    <div class="box adv" style="margin-top:16px">
+      <h3 style="margin-top:0">Forschungsaufträge</h3>
+      <ol>
+        <li><b>Systemprompt-Grenzen:</b> Versuchen Sie in <code>01</code>/<code>02</code>, den Systemprompt per Interaktionsprompt auszuhebeln („Ignoriere alle Regeln …“). Wann gelingt es?</li>
+        <li><b>Skill-Auslösung:</b> Schreiben Sie einen Skill <code>betriebsanweisung</code>. Testen Sie 5 Formulierungen: Wann wird er gewählt? Verbessern Sie die <code>description</code>.</li>
+        <li><b>Harness-Sicherheit:</b> Lesen Sie <code>sicherer_pfad()</code> in <code>04_harness.py</code>. Was passiert, wenn das Modell <code>../../geheim.txt</code> lesen will? Ergänzen Sie ein Werkzeug <code>loesche_datei</code> <i>mit</i> Rückfrage an den Menschen.</li>
+        <li><b>Loop-Prüfung:</b> Ersetzen Sie in <code>05_loop.py</code> die Python-Prüfung durch eine Selbstprüfung des Modells. Wird das Ergebnis besser oder schlechter?</li>
+        <li><b>Wiki-Qualität:</b> Lesen Sie eine eigene Quelle ein und vergleichen Sie Wiki-Seite und Original. Was fehlt, was ist erfunden?</li>
+        <li><b>Modellgröße:</b> Lassen Sie <code>04</code> mit <code>gemma3:1b</code> und <code>gemma4:e2b</code> laufen. Woran scheitert das kleine Modell?</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 7 · Glossar ======================= -->
+<section id="glossar">
+  <h2>7 · Glossar</h2>
+  <dl class="gloss">
+    <dt>Sprachmodell (LLM)</dt><dd>Programm, das zu einem Text den wahrscheinlich passenden nächsten Text erzeugt. Es hat kein eigenes Gedächtnis zwischen zwei Anfragen.</dd>
+    <dt>Kontextfenster</dt><dd>Der gesamte Text, den das Modell für eine Antwort „liest“: Systemprompt, Skills, Wiki-Auszüge, Verlauf, Ihre Nachricht. Es ist begrenzt.</dd>
+    <dt>Token</dt><dd>Wortstücke, in denen Modelle Text verarbeiten. Die Größe des Kontextfensters wird in Token gemessen.</dd>
+    <dt>Agent</dt><dd>Sprachmodell + Harness: Es kann nicht nur antworten, sondern über Werkzeuge in mehreren Schritten handeln.</dd>
+    <dt>Werkzeug (Tool)</dt><dd>Eine Funktion, die die Harness für das Modell ausführt, z. B. Datei lesen oder im Web suchen.</dd>
+    <dt>Progressive Disclosure</dt><dd>Wissen erst bei Bedarf in den Kontext laden (Prinzip der Skills).</dd>
+    <dt>Prompt-Injection</dt><dd>Versuch, über eingeschleusten Text die Regeln eines Systemprompts auszuhebeln.</dd>
+    <dt>Ollama</dt><dd>Kostenlose Software, mit der man Sprachmodelle lokal auf dem eigenen Rechner ausführt.</dd>
+    <dt>Markdown</dt><dd>Einfaches Textformat mit <code>#</code> für Überschriften und <code>-</code> für Listen. Skills, Wikis und LiaScript nutzen es.</dd>
+  </dl>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <span>Lerneinheit „Prompt-Arten verstehen“ · OVGU Magdeburg · Professur für Ingenieurpädagogik und Didaktik der technischen Bildung · Hannes Tegelbeckers</span>
+  <span>Lizenz: <a href="https://creativecommons.org/licenses/by/4.0/deed.de" target="_blank" rel="noopener">CC BY 4.0</a> · <a href="https://github.com/OVGU-VET-TechEd/KI_Promptarten" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.ovgu.de/impressum" target="_blank" rel="noopener">Impressum</a></span>
+</div></footer>
+
+<script>
+(function () {
+  "use strict";
+  var store = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  /* ---------- Theme ---------- */
+  var root = document.documentElement;
+  var savedTheme = store.get("pa-theme");
+  if (savedTheme) root.setAttribute("data-theme", savedTheme);
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next); store.set("pa-theme", next);
+  });
+
+  /* ---------- Level ---------- */
+  var levelBtns = document.querySelectorAll(".level button");
+  function setLevel(lvl) {
+    document.body.classList.remove("einsteiger", "fortgeschritten");
+    document.body.classList.add(lvl);
+    levelBtns.forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.level === lvl); });
+    document.getElementById("lvlBadge").textContent = "Modus: " + (lvl === "einsteiger" ? "🌱 Einsteiger:in" : "🔧 Fortgeschritten");
+    store.set("pa-level", lvl);
+  }
+  levelBtns.forEach(function (b) { b.addEventListener("click", function () { setLevel(b.dataset.level); }); });
+  var hashLvl = /fortgeschritten/.test(location.hash) ? "fortgeschritten" : null;
+  setLevel(hashLvl || store.get("pa-level") || "einsteiger");
+
+  /* ---------- Types data ---------- */
+  var T = {
+    int:   { name: "Interaktionsprompt", color: "--c-int", icon: "🗣️", short: "Ihre Nachricht im Chat: der konkrete Auftrag für jetzt.", who: "Sie", when: "diese Antwort", werk: "der mündliche Arbeitsauftrag" },
+    sys:   { name: "Systemprompt", color: "--c-sys", icon: "📋", short: "Unsichtbare Grundregeln vor dem Gespräch: Rolle, Ton und Grenzen.", who: "Anbieter / Lehrende", when: "ganze Sitzung", werk: "die Betriebsordnung" },
+    skill: { name: "Skillprompt", color: "--c-skill", icon: "📚", short: "Abgelegte Arbeitsanweisung, die nur bei passender Aufgabe geladen wird.", who: "Fachleute, Team", when: "bei Bedarf", werk: "der Ordner mit Arbeitsanweisungen" },
+    harn:  { name: "Harness-Prompt", color: "--c-harn", icon: "🏭", short: "Die Software um das Modell: Sie gibt Werkzeuge, Infos und Grenzen und führt Aktionen aus.", who: "Software-Hersteller", when: "die ganze Agenten-Arbeit", werk: "die Werkstatt mit Werkzeugen und Not-Aus" },
+    loop:  { name: "Loop-Prompt", color: "--c-loop", icon: "🔁", short: "Wiederholter Auftrag: ausführen, prüfen, verbessern, bis das Ziel erreicht ist.", who: "Sie / Entwickler:innen", when: "jede Runde", werk: "Messen und Nachbessern bis zur Toleranz" },
+    wiki:  { name: "Wiki-Prompt", color: "--c-wiki", icon: "📓", short: "Regeln für ein dauerhaftes Wissens-Wiki, das die KI liest und selbst weiterschreibt.", who: "Team + KI", when: "über viele Sitzungen", werk: "das Berichtsheft" }
+  };
+
+  /* ---------- Tabs ---------- */
+  var tabs = document.querySelectorAll('[role="tab"][aria-controls^="p-"]');
+  function selectTab(key, focus) {
+    tabs.forEach(function (t) {
+      var on = t.id === "tab-" + key;
+      t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      if (on && focus) t.focus();
+    });
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener("click", function () { selectTab(t.id.slice(4)); });
+    t.addEventListener("keydown", function (e) {
+      var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (d) { var n = tabs[(i + d + tabs.length) % tabs.length]; selectTab(n.id.slice(4), true); }
+    });
+  });
+
+  /* ---------- Big picture ---------- */
+  var infoBox = document.getElementById("infoBox");
+  function showInfo(key) {
+    var t = T[key];
+    document.querySelectorAll(".picture .layer").forEach(function (l) { l.classList.toggle("active", l.dataset.type === key); });
+    infoBox.style.setProperty("--accent", "var(" + t.color + ")");
+    infoBox.innerHTML = "<h3>" + t.icon + " " + t.name + "</h3><p>" + t.short + "</p>" +
+      '<dl class="who"><dt>Wer schreibt?</dt><dd>' + t.who + "</dd><dt>Gilt für</dt><dd>" + t.when +
+      "</dd><dt>Werkstatt-Bild</dt><dd>" + t.werk + "</dd></dl>" +
+      '<p style="margin-bottom:0"><a href="#arten" data-goto="' + key + '">Mehr dazu ↓</a></p>';
+  }
+  document.querySelectorAll(".picture .layer").forEach(function (l) {
+    function act(e) {
+      e.stopPropagation(); showInfo(l.dataset.type);
+      if (window.innerWidth < 820) infoBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    l.addEventListener("click", act);
+    l.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(e); } });
+  });
+  infoBox.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-goto]"); if (a) selectTab(a.dataset.goto);
+  });
+  infoBox.innerHTML = "<h3>Wählen Sie einen Bereich</h3><p>Das Bild zeigt, wie die Prompt-Arten ineinandergreifen. Innen das <b>Kontextfenster</b> mit allem, was das Modell liest. Darum herum der <b>Loop</b>, der wiederholt und prüft. Ganz außen die <b>Harness</b>, die Werkzeuge bereitstellt und Grenzen setzt.</p>";
+
+  /* ---------- Simulation ---------- */
+  var AUFTRAG = "Erstelle eine Gefährdungsbeurteilung für unseren Lötarbeitsplatz.";
+  var steps = [
+    { key: "int", label: "Nur Interaktion",
+      add: { cls: "int", title: "Interaktionsprompt", text: AUFTRAG },
+      out: "<p>Gerne! Beim Löten gibt es verschiedene Gefahren. Dazu gehören Verbrennungen durch heiße Lötspitzen, Lötrauch, der eingeatmet werden kann, Brandgefahr sowie elektrische Gefährdungen. Es empfiehlt sich, eine Schutzbrille zu tragen und für Belüftung zu sorgen. Beachten Sie die DIN-Norm 4711-Löt (…)</p>",
+      verdict: "❌ Fließtext statt Tabelle, keine Zielgruppe, und die „DIN 4711-Löt“ ist <b>erfunden</b>. Das Modell weiß nicht, was „unser“ Arbeitsplatz ist." },
+    { key: "sys", label: "+ System",
+      add: { cls: "sys", title: "Systemprompt", text: "Du bist Lernbegleiter für Auszubildende (Elektrotechnik).\nEinfache Sprache. Bei Arbeitsschutz: Prüfung durch Lehrkraft.\nWenn du unsicher bist, sag es." },
+      out: "<ul><li>Heiße Lötspitze → Verbrennungen. Lötkolben immer in den Ständer.</li><li>Lötrauch → Atemwege. Für Absaugung sorgen.</li><li>Brandgefahr → keine brennbaren Dinge in der Nähe.</li><li>Schutzbrille tragen (Spritzer).</li></ul><p>⚠️ Bitte lass das von deiner Lehrkraft prüfen. Bei Normen bin ich mir nicht sicher.</p>",
+      verdict: "◐ Verständlicher, ehrlicher, mit Sicherheitshinweis. Aber noch keine echte Gefährdungsbeurteilung, und der konkrete Arbeitsplatz bleibt unbekannt." },
+    { key: "skill", label: "+ Skill",
+      add: { cls: "skill", title: "Skill geladen: gefaehrdungsbeurteilung", text: "Tabelle: Gefährdung | Ursache | Schutzmaßnahme (T-O-P) | Rechtsgrundlage\nRechtsgrundlage nur wenn sicher, sonst „bitte prüfen“." },
+      out: "<table><tr><th>Gefährdung</th><th>Ursache</th><th>Maßnahme (T-O-P)</th><th>Recht</th></tr><tr><td>Verbrennung</td><td>Lötspitze ca. 350 °C</td><td>T: Ablageständer · O: Unterweisung</td><td>ArbSchG</td></tr><tr><td>Lötrauch</td><td>Flussmittel</td><td>T: Absaugung · P: –</td><td>GefStoffV</td></tr><tr><td>Brand</td><td>heiße Teile</td><td>O: Arbeitsplatz frei halten</td><td>bitte prüfen</td></tr></table><p><i>KI-Entwurf, muss fachkundig geprüft werden.</i></p>",
+      verdict: "◐ Jetzt in der richtigen Form, nach T-O-P geordnet, ehrlich bei Unsicherheit. Aber weiterhin allgemein: Welche Absaugung? Welches Lot?" },
+    { key: "wiki", label: "+ Wiki",
+      add: { cls: "wiki", title: "Wiki-Seite: lötarbeitsplatz-labor-032.md", text: "6 Lötstationen, temperaturgeregelt (max. 380 °C)\nPunktabsaugung mit Filter an jedem Platz\nbleifreies Lot, Flussmittel auf Kolophoniumbasis\nNot-Aus an der Tür, Feuerlöscher CO₂" },
+      out: "<table><tr><th>Gefährdung</th><th>Ursache</th><th>Maßnahme (T-O-P)</th><th>Recht</th></tr><tr><td>Verbrennung</td><td>Lötstation bis 380 °C</td><td>T: Ablageständer, Temperatur auf 330 °C begrenzen · O: Unterweisung</td><td>ArbSchG</td></tr><tr><td>Kolophonium-Dämpfe</td><td>Flussmittel</td><td>T: Punktabsaugung einschalten <b>vor</b> Arbeitsbeginn</td><td>GefStoffV</td></tr><tr><td>Brand</td><td>heiße Teile</td><td>O: CO₂-Löscher an der Tür zeigen</td><td>bitte prüfen</td></tr></table>",
+      verdict: "✔ Konkret für <b>unseren</b> Raum: Das Wiki liefert Wissen aus früheren Sitzungen, das in keinem Prompt stand." },
+    { key: "harn", label: "+ Harness",
+      add: { cls: "harn", title: "Harness: Werkzeuge & Umgebung", text: "Werkzeuge: lies_datei, schreibe_datei, fertig\nArbeitsordner: laborauftrag.txt, vorlage_gbu.docx\n→ Modell: lies_datei(\"laborauftrag.txt\")\n← Harness: „…Platinen für Lernfeld 3, 2er-Teams…“\n→ Modell: schreibe_datei(\"gbu_loetplatz.md\", …)" },
+      out: "<p>📄 <b>Datei angelegt:</b> <code>gbu_loetplatz.md</code></p><p>Die Tabelle enthält jetzt zusätzlich die Tätigkeit aus dem Laborauftrag (Platinen bestücken, 2er-Teams, LF 3) und eine Zeile „Gefährdung durch Zusammenarbeit (Kabelwege, Gedränge)“.</p>",
+      verdict: "✔ Das Modell <b>handelt</b>: Es liest selbst den Laborauftrag und legt eine Datei an. Möglich ist das nur, weil die Harness Werkzeuge bereitstellt und ausführt." },
+    { key: "loop", label: "+ Loop",
+      add: { cls: "loop", title: "Loop-Prompt: Prüfen & verbessern", text: "Prüfe gbu_loetplatz.md gegen die Checkliste:\n☐ jede Zeile hat T-, O- oder P-Maßnahme ☐ jede Rechtsgrundlage belegt\n☐ Notfall-Abschnitt vorhanden — max. 3 Runden\nRunde 1: ✘ Notfall-Abschnitt fehlt · ✘ Zeile 3 ohne Beleg\nRunde 2: ✔ alles erfüllt" },
+      out: "<p>📄 <code>gbu_loetplatz.md</code> (Runde 2)</p><table><tr><th>Gefährdung</th><th>Maßnahme</th><th>Recht</th></tr><tr><td>Verbrennung</td><td>T · O</td><td>ArbSchG § 4</td></tr><tr><td>Kolophonium-Dämpfe</td><td>T · O</td><td>GefStoffV</td></tr><tr><td>Brand</td><td>O</td><td>ASR A2.2 – <i>bitte prüfen</i></td></tr></table><p><b>Notfall:</b> Not-Aus an der Tür · CO₂-Löscher · Ersthelfer:in benennen.</p>",
+      verdict: "✔ Durch die eingeplante Prüfschleife wurden Lücken gefunden und geschlossen. <b>Trotzdem gilt:</b> Eine fachkundige Person prüft das Ergebnis, bevor es im Labor eingesetzt wird." }
+  ];
+  var cur = 0, nav = document.getElementById("stepNav");
+  steps.forEach(function (s, i) {
+    var b = document.createElement("button");
+    b.type = "button"; b.textContent = (i + 1) + " · " + s.label;
+    b.style.setProperty("--k", "var(" + T[s.key].color + ")");
+    b.addEventListener("click", function () { render(i); });
+    nav.appendChild(b);
+  });
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+  function render(i) {
+    cur = i;
+    var order = ["harn", "loop", "sys", "skill", "wiki", "int"], html = "";
+    var active = steps.slice(0, i + 1);
+    order.forEach(function (k) {
+      active.forEach(function (s) {
+        if (s.key === k) html += '<div class="slot ' + s.add.cls + '"><b>' + T[k].icon + " " + s.add.title + "</b><pre>" + esc(s.add.text) + "</pre></div>";
+      });
+    });
+    document.getElementById("simCtx").innerHTML = html;
+    document.getElementById("simOut").innerHTML = steps[i].out;
+    document.getElementById("simVerdict").innerHTML = steps[i].verdict;
+    nav.querySelectorAll("button").forEach(function (b, j) { b.classList.toggle("on", j === i); b.classList.toggle("done", j < i); });
+    document.getElementById("prevStep").disabled = i === 0;
+    var nx = document.getElementById("nextStep");
+    nx.disabled = i === steps.length - 1;
+    nx.textContent = i === steps.length - 1 ? "Alle Schichten aktiv ✔" : "Nächste Schicht: " + steps[i + 1].label.replace("+ ", "") + " →";
+  }
+  document.getElementById("prevStep").addEventListener("click", function () { if (cur > 0) render(cur - 1); });
+  document.getElementById("nextStep").addEventListener("click", function () { if (cur < steps.length - 1) render(cur + 1); });
+  render(0);
+
+  /* ---------- Quiz ---------- */
+  var Q = [
+    ["Sie tippen in HAWKI: „Fasse diesen Text in 5 Stichpunkten zusammen.“", "int", "Ein konkreter Auftrag, den Sie selbst im Moment eintippen."],
+    ["Der Chatbot der Hochschule antwortet immer auf Deutsch und lehnt es ab, komplette Hausarbeiten zu schreiben, egal wie man fragt.", "sys", "Dauerhafte Regeln, die vor jedem Gespräch gelten und die Sie nicht sehen."],
+    ["Ein Ordner „betriebsanweisung-erstellen“ mit Anleitung und Vorlage, den der Assistent nur öffnet, wenn es um Betriebsanweisungen geht.", "skill", "Spezialwissen auf Abruf: Der Katalog ist bekannt, der Inhalt wird nur bei Bedarf geladen."],
+    ["Die Software teilt dem Modell mit: „Du kannst die Werkzeuge datei_lesen und websuche benutzen. Heute ist der 27.10.2026.“", "harn", "Werkzeuge und Umgebungsinfos kommen von der Software rund um das Modell."],
+    ["„Überarbeite das Arbeitsblatt so lange, bis alle Punkte der Checkliste erfüllt sind. Höchstens 5 Durchgänge.“", "loop", "Wiederholung mit Prüfkriterium und Abbruchregel."],
+    ["„Lies jede neue Quelle, schreibe pro Fachbegriff eine Seite und aktualisiere das Inhaltsverzeichnis.“", "wiki", "Regeln für eine dauerhafte Wissenssammlung, die die KI selbst pflegt."],
+    ["Jede Stunde schaut der Agent nach, ob neue Abgaben im Ordner liegen, und schreibt dazu Feedback.", "loop", "Ein zeitgesteuerter Loop: derselbe Auftrag in festen Abständen."],
+    ["Der Agent darf Dateien nur im Projektordner ändern und muss fragen, bevor er etwas löscht.", "harn", "Berechtigungen und Grenzen setzt die Harness, nicht das Modell selbst."],
+    ["Eine Datei im Projekt sammelt Fachbegriffe und getroffene Entscheidungen. Der Agent liest sie bei jedem Start und ergänzt sie nach jeder Sitzung.", "wiki", "Dauerhaftes Gedächtnis über Sitzungen hinweg, von der KI mitgeschrieben."],
+    ["Eine Lehrerin richtet einen KI-Assistenten für ihre Klasse ein: „Du bist geduldiger Mathe-Tutor. Verrate nie direkt die Lösung, gib nur Hinweise.“", "sys", "Rolle und feste Regeln für alle Gespräche: ein Systemprompt."]
+  ];
+  var order = ["int", "sys", "skill", "harn", "loop", "wiki"];
+  var short = { int: "Interaktion", sys: "System", skill: "Skill", harn: "Harness", loop: "Loop", wiki: "Wiki" };
+  var quizBox = document.getElementById("quizBox"), right = 0, done = 0;
+  function updScore() { document.getElementById("score").textContent = right + " von " + done + " richtig" + (done === Q.length ? (right === Q.length ? " 🎉 Perfekt!" : " · Schauen Sie sich die falschen noch einmal an.") : " (" + (Q.length - done) + " offen)"); }
+  function buildQuiz() {
+    quizBox.innerHTML = ""; right = 0; done = 0;
+    Q.forEach(function (q, qi) {
+      var d = document.createElement("div"); d.className = "q";
+      d.innerHTML = "<p><b>" + (qi + 1) + ".</b> " + q[0] + '</p><div class="opts"></div><div class="fb"></div>';
+      var opts = d.querySelector(".opts");
+      order.forEach(function (k) {
+        var b = document.createElement("button"); b.type = "button"; b.textContent = T[k].icon + " " + short[k];
+        b.addEventListener("click", function () {
+          if (d.classList.contains("answered")) return;
+          d.classList.add("answered"); done++;
+          var ok = k === q[1]; if (ok) right++;
+          b.classList.add(ok ? "right" : "wrong");
+          if (!ok) opts.children[order.indexOf(q[1])].classList.add("right");
+          opts.querySelectorAll("button").forEach(function (x) { x.disabled = true; });
+          d.querySelector(".fb").innerHTML = (ok ? "✔ Richtig. " : "✘ Es ist <b>" + T[q[1]].name + "</b>. ") + q[2];
+          updScore();
+        });
+        opts.appendChild(b);
+      });
+      quizBox.appendChild(d);
+    });
+    updScore();
+  }
+  document.getElementById("quizReset").addEventListener("click", buildQuiz);
+  buildQuiz();
+
+  /* ---------- Copy buttons ---------- */
+  document.querySelectorAll(".copy").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var txt = b.parentElement.querySelector("pre").innerText;
+      var done = function () { b.textContent = "Kopiert ✔"; setTimeout(function () { b.textContent = "Kopieren"; }, 1500); };
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, function () {});
+      else { var r = document.createRange(); r.selectNodeContents(b.parentElement.querySelector("pre")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

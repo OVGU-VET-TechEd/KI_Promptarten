@@ -1,0 +1,14 @@
+Laborauftrag: Messung an einer Reihenschaltung
+Ausbildungsberuf: Elektroniker/-in für Energie- und Gebäudetechnik, 1. Ausbildungsjahr
+Lernfeld 1: Elektrotechnische Systeme analysieren und Funktionen prüfen
+
+Aufbau: Labornetzgerät (0-30 V DC, Strombegrenzung), zwei Widerstände (100 Ohm, 220 Ohm),
+Steckbrett, zwei Digitalmultimeter, Messleitungen mit Sicherheitssteckern.
+
+Ablauf:
+1. Schaltung im spannungsfreien Zustand aufbauen.
+2. Strombegrenzung des Netzgeräts auf 100 mA einstellen.
+3. Aufbau von der Lehrkraft prüfen lassen.
+4. Spannung auf 12 V einstellen, Teilspannungen und Strom messen.
+5. Messwerte mit der Berechnung vergleichen.
+6. Netzgerät ausschalten, dann Schaltung abbauen.

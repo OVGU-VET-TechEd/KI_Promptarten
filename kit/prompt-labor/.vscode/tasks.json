@@ -1,0 +1,164 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "01 Interaktionsprompt",
+      "type": "process",
+      "command": "python3",
+      "windows": {
+        "command": "python"
+      },
+      "args": [
+        "01_interaktionsprompt.py",
+        "${input:auftrag}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "02 Systemprompt",
+      "type": "process",
+      "command": "python3",
+      "windows": {
+        "command": "python"
+      },
+      "args": [
+        "02_systemprompt.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "03 Skillprompt",
+      "type": "process",
+      "command": "python3",
+      "windows": {
+        "command": "python"
+      },
+      "args": [
+        "03_skillprompt.py",
+        "${input:auftrag}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "04 Harness-Prompt",
+      "type": "process",
+      "command": "python3",
+      "windows": {
+        "command": "python"
+      },
+      "args": [
+        "04_harness.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "05 Loop-Prompt",
+      "type": "process",
+      "command": "python3",
+      "windows": {
+        "command": "python"
+      },
+      "args": [
+        "05_loop.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "06a Wiki einlesen",
+      "type": "process",
+      "command": "python3",
+      "windows": {
+        "command": "python"
+      },
+      "args": [
+        "06_wiki.py",
+        "einlesen"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "06b Wiki fragen",
+      "type": "process",
+      "command": "python3",
+      "windows": {
+        "command": "python"
+      },
+      "args": [
+        "06_wiki.py",
+        "frage",
+        "${input:frage}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "auftrag",
+      "type": "promptString",
+      "description": "Ihr Auftrag an das Modell",
+      "default": "Mach mir ein Quiz zum Thema Schutzleiter."
+    },
+    {
+      "id": "frage",
+      "type": "promptString",
+      "description": "Ihre Frage an das Wiki",
+      "default": "Warum kommt die Schutzbrille im Arbeitsschutz erst zuletzt?"
+    }
+  ]
+}

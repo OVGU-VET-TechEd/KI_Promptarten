@@ -1,0 +1,10 @@
+Das T-O-P-Prinzip beschreibt die Rangfolge von Schutzmaßnahmen im Arbeitsschutz.
+Zuerst wird geprüft, ob sich eine Gefahr ganz beseitigen oder durch Substitution
+vermeiden lässt (z. B. ein ungefährlicheres Verfahren). Danach kommen technische
+Maßnahmen (T), zum Beispiel Absaugungen, Schutzabdeckungen oder Not-Aus-Schalter.
+Reichen diese nicht aus, folgen organisatorische Maßnahmen (O) wie Unterweisungen,
+Betriebsanweisungen oder Zugangsregelungen. Erst zuletzt werden personenbezogene
+Maßnahmen (P) eingesetzt, etwa Schutzbrillen oder Handschuhe. Grund für die Rangfolge:
+Technische Lösungen wirken unabhängig vom Verhalten einzelner Personen, persönliche
+Schutzausrüstung schützt nur, wenn sie richtig und dauerhaft getragen wird.
+Das Prinzip ist im Arbeitsschutzgesetz (§ 4 ArbSchG) als allgemeiner Grundsatz verankert.
