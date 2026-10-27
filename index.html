@@ -117,6 +117,16 @@ main h3 { font-size: 21px; margin: 18px 0 8px; }
 .info .who dt { color: var(--ink-3); }
 .info .who dd { margin: 0; }
 
+/* ---------- Stages ---------- */
+.stages { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 10px; margin: 0 0 20px; padding: 0; list-style: none; }
+.stages li { background: var(--bg-card); border: 1px solid var(--line); border-top: 5px solid var(--k); border-radius: 6px; padding: 10px 14px 12px; font-size: 15px; }
+.stages li > b { display: block; font-family: "Barlow Semi Condensed", sans-serif; font-size: 17px; color: var(--k); }
+.stages li > b small { display: block; font-family: "Barlow", sans-serif; font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.stages .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.stages .chips a { font-size: 13.5px; text-decoration: none; color: var(--ink); background: var(--bg-soft); border: 1px solid var(--line); border-radius: 12px; padding: 0 9px; }
+.stages .chips a:hover { border-color: var(--main); color: var(--main); }
+.stage-tag { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin: 0 0 6px; }
+
 /* ---------- Tabs ---------- */
 .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; border-bottom: 2px solid var(--line); }
 .tabs button { font: 600 16px "Barlow Semi Condensed", sans-serif; background: var(--bg-soft); color: var(--ink-2); border: 1px solid var(--line); border-bottom: none; border-radius: 6px 6px 0 0; padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 7px; }
@@ -214,7 +224,7 @@ footer .wrap { padding-top: 18px; padding-bottom: 22px; display: flex; flex-wrap
 <header class="hero"><div class="wrap">
   <div class="kicker">KI verstehen · Lerneinheit</div>
   <h1>Prompt-Arten verstehen</h1>
-  <p>Vom Chat zum KI-Agenten: Was steckt hinter <b>Interaktions-, System-, Skill-, Harness-, Loop- und Wiki-Prompts</b>? Und warum ist das, was Sie eintippen, nur ein kleiner Teil dessen, was das Sprachmodell tatsächlich „liest“?</p>
+  <p>Vom Chat zum lernenden KI-Agenten in vier Stufen: Was steckt hinter <b>Interaktions-, System-, Skill-, Harness-, Loop- und Wiki-Prompts</b>? Und warum ist das, was Sie eintippen, nur ein kleiner Teil dessen, was das Sprachmodell tatsächlich „liest“?</p>
   <div class="level" role="group" aria-label="Lernniveau wählen">
     <button type="button" data-level="einsteiger" aria-pressed="true"><strong>🌱 Einsteiger:in</strong><span>Ohne Vorkenntnisse. Alltagsvergleiche, Übungen direkt im Chat (z. B. HAWKI).</span></button>
     <button type="button" data-level="fortgeschritten" aria-pressed="false"><strong>🔧 Fortgeschritten</strong><span>Zusätzlich Technik-Details, Dateiformate und ein Starter-Kit für VS Code + Ollama.</span></button>
@@ -233,8 +243,21 @@ footer .wrap { padding-top: 18px; padding-bottom: 22px; display: flex; flex-wrap
   <h2>1 · Das große Bild</h2>
   <p class="lead">Ein Sprachmodell hat kein Gedächtnis und keine Hände. Es bekommt bei jeder Antwort einen großen Textblock – das <b>Kontextfenster</b> – und schreibt den wahrscheinlichsten Text dazu. Die sechs Prompt-Arten beschreiben, <b>wer</b> welchen Teil dieses Textblocks schreibt und <b>wann</b> er hineinkommt.</p>
 
+  <h3>Der rote Faden: vier Stufen</h3>
+  <p>Jede Stufe baut auf der vorherigen auf. In dieser Reihenfolge ist die ganze Seite aufgebaut: Tabs, Simulation, Vergleich und Übungen.</p>
+  <ol class="stages">
+    <li style="--k:var(--c-int)"><b><small>Stufe 1</small>Mit dem Modell sprechen</b>Was Sie schreiben und welche Regeln immer gelten.
+      <div class="chips"><a href="#arten" data-goto="int">🗣️ Interaktion</a><a href="#arten" data-goto="sys">📋 System</a></div></li>
+    <li style="--k:var(--c-harn)"><b><small>Stufe 2</small>Harness: Einfluss ausbauen</b>Die Software um das Modell lädt Arbeitsanweisungen nach und gibt ihm Werkzeuge.
+      <div class="chips"><a href="#arten" data-goto="skill">📚 Skill</a><a href="#arten" data-goto="harn">🏭 Harness</a></div></li>
+    <li style="--k:var(--c-loop)"><b><small>Stufe 3</small>Loops: Grenzen prüfen</b>Der Agent arbeitet in Runden, mit Prüfkriterien, Abbruchregel und Übergabe an einen Menschen.
+      <div class="chips"><a href="#arten" data-goto="loop">🔁 Loop</a></div></li>
+    <li style="--k:var(--c-wiki)"><b><small>Stufe 4</small>Lernende Agenten</b>Was der Agent einmal geklärt hat, schreibt er ins Wiki und nutzt es beim nächsten Mal.
+      <div class="chips"><a href="#arten" data-goto="wiki">📓 Wiki</a></div></li>
+  </ol>
+
   <div class="box beg nur-einsteiger" style="margin-bottom:16px">
-    <p style="margin:0">Stellen Sie sich das Modell als <b>neue Auszubildende</b> vor: sehr belesen, aber mit zwei Schwächen. Sie vergisst über Nacht alles, und sie kann ohne Werkstatt nichts anfassen. Damit sie trotzdem gute Arbeit macht, braucht sie einen Auftrag, Betriebsregeln, Arbeitsanweisungen, eine Werkstatt, eine Qualitätsprüfung und ein Berichtsheft. Genau das sind die sechs Prompt-Arten.</p>
+    <p style="margin:0">Stellen Sie sich das Modell als <b>neue Auszubildende</b> vor: sehr belesen, aber mit zwei Schwächen. Sie vergisst über Nacht alles, und sie kann ohne Werkstatt nichts anfassen. Damit sie trotzdem gute Arbeit macht, braucht sie zuerst einen Auftrag und Betriebsregeln (Stufe 1), dann Arbeitsanweisungen und eine Werkstatt (Stufe 2), eine Qualitätsprüfung mit klaren Grenzen (Stufe 3) und schließlich ein Berichtsheft, aus dem sie lernt (Stufe 4). Genau das sind die sechs Prompt-Arten.</p>
   </div>
 
   <p class="muted">👉 Klicken Sie auf die Bereiche im Bild.</p>
@@ -267,16 +290,17 @@ footer .wrap { padding-top: 18px; padding-bottom: 22px; display: flex; flex-wrap
 <section id="arten">
   <h2>2 · Die sechs Prompt-Arten im Detail</h2>
   <div class="tabs" role="tablist" aria-label="Prompt-Arten">
-    <button role="tab" id="tab-int" aria-controls="p-int" aria-selected="true" style="--k:var(--c-int)"><span class="dot"></span>Interaktion</button>
-    <button role="tab" id="tab-sys" aria-controls="p-sys" aria-selected="false" style="--k:var(--c-sys)"><span class="dot"></span>System</button>
-    <button role="tab" id="tab-skill" aria-controls="p-skill" aria-selected="false" style="--k:var(--c-skill)"><span class="dot"></span>Skill</button>
-    <button role="tab" id="tab-harn" aria-controls="p-harn" aria-selected="false" style="--k:var(--c-harn)"><span class="dot"></span>Harness</button>
-    <button role="tab" id="tab-loop" aria-controls="p-loop" aria-selected="false" style="--k:var(--c-loop)"><span class="dot"></span>Loop</button>
-    <button role="tab" id="tab-wiki" aria-controls="p-wiki" aria-selected="false" style="--k:var(--c-wiki)"><span class="dot"></span>Wiki</button>
+    <button role="tab" id="tab-int" aria-controls="p-int" aria-selected="true" style="--k:var(--c-int)"><span class="dot"></span>1 · Interaktion</button>
+    <button role="tab" id="tab-sys" aria-controls="p-sys" aria-selected="false" style="--k:var(--c-sys)"><span class="dot"></span>1 · System</button>
+    <button role="tab" id="tab-skill" aria-controls="p-skill" aria-selected="false" style="--k:var(--c-skill)"><span class="dot"></span>2 · Skill</button>
+    <button role="tab" id="tab-harn" aria-controls="p-harn" aria-selected="false" style="--k:var(--c-harn)"><span class="dot"></span>2 · Harness</button>
+    <button role="tab" id="tab-loop" aria-controls="p-loop" aria-selected="false" style="--k:var(--c-loop)"><span class="dot"></span>3 · Loop</button>
+    <button role="tab" id="tab-wiki" aria-controls="p-wiki" aria-selected="false" style="--k:var(--c-wiki)"><span class="dot"></span>4 · Wiki</button>
   </div>
 
   <!-- Interaktion -->
   <div class="panel" role="tabpanel" id="p-int" aria-labelledby="tab-int" style="--k:var(--c-int)">
+    <p class="stage-tag">Stufe 1 · Mit dem Modell sprechen</p>
     <p class="one">Der <b>Interaktionsprompt</b> ist die Nachricht, die Sie selbst in das Chatfenster tippen: ein konkreter Auftrag für genau diesen Moment.</p>
     <div class="facts">
       <div><b>Wer schreibt ihn?</b>Sie als Nutzer:in</div>
@@ -306,6 +330,7 @@ im 1. Ausbildungsjahr. Format: Multiple Choice, eine richtige Antwort.</code></p
 
   <!-- System -->
   <div class="panel" role="tabpanel" id="p-sys" aria-labelledby="tab-sys" style="--k:var(--c-sys)" hidden>
+    <p class="stage-tag">Stufe 1 · Mit dem Modell sprechen</p>
     <p class="one">Der <b>Systemprompt</b> steht <i>vor</i> dem ganzen Gespräch. Er legt fest, <b>wer</b> das Modell sein soll, <b>wie</b> es antwortet und welche <b>Regeln</b> immer gelten.</p>
     <div class="facts">
       <div><b>Wer schreibt ihn?</b>Anbieter der App, Lehrende, Entwickler:innen, teils Sie selbst („Eigene Anweisungen“)</div>
@@ -332,7 +357,8 @@ im 1. Ausbildungsjahr. Format: Multiple Choice, eine richtige Antwort.</code></p
 
   <!-- Skill -->
   <div class="panel" role="tabpanel" id="p-skill" aria-labelledby="tab-skill" style="--k:var(--c-skill)" hidden>
-    <p class="one">Ein <b>Skillprompt</b> ist eine abgelegte Anleitung für eine bestimmte Aufgabe. Das Modell kennt zunächst nur <b>Titel und Kurzbeschreibung</b> aller Skills und lädt die vollständige Anleitung erst, <b>wenn sie gebraucht wird</b>.</p>
+    <p class="stage-tag">Stufe 2 · Harness: Einfluss ausbauen</p>
+    <p class="one">Ein <b>Skillprompt</b> ist eine abgelegte Anleitung für eine bestimmte Aufgabe. Das Modell kennt zunächst nur <b>Titel und Kurzbeschreibung</b> aller Skills, und die Harness lädt die vollständige Anleitung erst, <b>wenn sie gebraucht wird</b>.</p>
     <div class="facts">
       <div><b>Wer schreibt ihn?</b>Fachleute, Lehrende, Teams: einmal, für viele Anwendungen</div>
       <div><b>Wann wirkt er?</b>nur wenn die Aufgabe passt</div>
@@ -364,7 +390,8 @@ description: Erstellt eine kurze Gefährdungsbeurteilung für einen Laboraufbau.
 
   <!-- Harness -->
   <div class="panel" role="tabpanel" id="p-harn" aria-labelledby="tab-harn" style="--k:var(--c-harn)" hidden>
-    <p class="one">Die <b>Harness</b> ist die Software <i>um</i> das Sprachmodell herum. Sie gibt ihm Werkzeuge und setzt Grenzen. Der <b>Harness-Prompt</b> ist der Text, mit dem sie dem Modell erklärt, was es tun darf, was es gerade „sieht“ und wie es Werkzeuge anfordert.</p>
+    <p class="stage-tag">Stufe 2 · Harness: Einfluss ausbauen</p>
+    <p class="one">Die <b>Harness</b> ist die Software <i>um</i> das Sprachmodell herum. Mit ihr wachsen die Möglichkeiten, das Modell zu steuern: Sie baut Systemprompt und Skills in den Kontext ein, gibt ihm Werkzeuge und setzt Berechtigungen. Der <b>Harness-Prompt</b> ist der Text, mit dem sie dem Modell erklärt, was es tun darf, was es gerade „sieht“ und wie es Werkzeuge anfordert.</p>
     <div class="facts">
       <div><b>Wer schreibt ihn?</b>Hersteller der Agenten-Software</div>
       <div><b>Wann wirkt er?</b>während der ganzen Arbeit des Agenten</div>
@@ -392,16 +419,17 @@ while schritte &lt; MAX:
       <p>Systemprompt, Skill-Katalog und Projektdateien werden von der Harness in den Kontext eingebaut. Die Harness ist also der „Dirigent“ aller anderen Prompt-Arten. Kleine Modelle scheitern oft genau hier: falsche Werkzeugnamen, kaputtes JSON, Endlosschleifen.</p>
       <p class="muted">Im Starter-Kit: <code>04_harness.py</code> ist eine komplette Mini-Harness in ca. 100 Zeilen Python.</p>
     </div>
-    <div class="warn"><b>Merke:</b> Je mehr Werkzeuge eine Harness freigibt (Dateien löschen, E-Mails senden), desto wichtiger sind Grenzen und menschliche Freigaben.</div>
+    <div class="warn"><b>Merke:</b> Je mehr Werkzeuge eine Harness freigibt (Dateien löschen, E-Mails senden), desto wichtiger sind Grenzen und menschliche Freigaben. Genau darum geht es in Stufe 3.</div>
   </div>
 
   <!-- Loop -->
   <div class="panel" role="tabpanel" id="p-loop" aria-labelledby="tab-loop" style="--k:var(--c-loop)" hidden>
-    <p class="one">Ein <b>Loop-Prompt</b> ist ein Auftrag, der <b>wiederholt</b> ausgeführt wird: so lange, bis ein <b>Prüfkriterium</b> erfüllt ist, oder in festen Abständen. Jede Runde baut auf dem Ergebnis der vorherigen auf.</p>
+    <p class="stage-tag">Stufe 3 · Loops: Grenzen prüfen</p>
+    <p class="one">Ein <b>Loop-Prompt</b> ist ein Auftrag, der <b>wiederholt</b> ausgeführt wird: so lange, bis ein <b>Prüfkriterium</b> erfüllt ist, oder in festen Abständen. Er setzt dem Agenten <b>Grenzen</b>: Was gilt als fertig, wie viele Runden sind erlaubt, und wann übernimmt ein Mensch?</p>
     <div class="facts">
       <div><b>Wer schreibt ihn?</b>Sie oder die Entwickler:innen eines Agenten</div>
       <div><b>Wann wirkt er?</b>in jeder Runde neu</div>
-      <div><b>Kernbestandteile</b>Ziel · Prüfkriterien · Rückmeldung · Abbruchregel</div>
+      <div><b>Kernbestandteile</b>Ziel · Prüfkriterien · Rückmeldung · Abbruchregel · Übergabe an Menschen</div>
       <div><b>Verwandt</b>PDCA-Zyklus, iteratives Prompting</div>
     </div>
     <div class="analogy"><span class="ico">📏</span><div><b>In der Werkstatt:</b> Werkstück fertigen → messen → nachbessern → wieder messen, bis die Toleranz eingehalten ist. Und nach drei Fehlversuchen holt man die Meisterin.</div></div>
@@ -411,7 +439,7 @@ while schritte &lt; MAX:
 Hier ist der aktuelle Stand: {stand}
 Rückmeldung der letzten Prüfung: {rueckmeldung}
 Höchstens 5 Runden. Danach an einen Menschen übergeben.</code></pre></div>
-    <p>Sie kennen das Prinzip aus dem iterativen Prompting („Überarbeite …“). Beim Loop-Prompt ist die Wiederholung <b>eingeplant</b>: Die Kriterien stehen vorher fest, und es gibt eine <b>Abbruchregel</b>, damit die Schleife nicht endlos läuft.</p>
+    <p>Sie kennen das Prinzip aus dem iterativen Prompting („Überarbeite …“). Beim Loop-Prompt ist die Wiederholung <b>eingeplant</b>: Die Kriterien stehen vorher fest, und es gibt eine <b>Abbruchregel</b>, damit die Schleife nicht endlos läuft. Erst die Harness aus Stufe 2 macht solche Schleifen ohne Ihr Zutun möglich. Deshalb braucht jeder Loop klare Grenzen: Der Agent soll Lücken melden, statt sie mit Erfundenem zu füllen.</p>
     <div class="box adv nur-fortgeschritten">
       <p>Zwei Formen begegnen Ihnen in Agenten-Werkzeugen:</p>
       <ul>
@@ -430,7 +458,8 @@ done</code></pre>
 
   <!-- Wiki -->
   <div class="panel" role="tabpanel" id="p-wiki" aria-labelledby="tab-wiki" style="--k:var(--c-wiki)" hidden>
-    <p class="one">Ein <b>Wiki-Prompt</b> legt fest, wie ein KI-Agent eine <b>dauerhafte Wissenssammlung</b> aufbaut und pflegt: Markdown-Seiten, die über viele Sitzungen hinweg wachsen. Das Wiki ist das <b>Langzeitgedächtnis</b>, das dem Modell selbst fehlt.</p>
+    <p class="stage-tag">Stufe 4 · Lernende Agenten</p>
+    <p class="one">Ein <b>Wiki-Prompt</b> legt fest, wie ein KI-Agent eine <b>dauerhafte Wissenssammlung</b> aufbaut und pflegt: Markdown-Seiten, die über viele Sitzungen hinweg wachsen. Das Wiki ist das <b>Langzeitgedächtnis</b>, das dem Modell selbst fehlt. Damit wird aus dem Agenten ein <b>lernender Agent</b>: Was in einem Loop geklärt wurde, steht beim nächsten Auftrag schon bereit.</p>
     <div class="facts">
       <div><b>Wer schreibt ihn?</b>Sie bzw. das Team, einmalig. Das Wiki selbst schreibt dann die KI mit.</div>
       <div><b>Wann wirkt er?</b>beim Einlesen neuer Quellen und beim Nachschlagen</div>
@@ -460,7 +489,7 @@ WIKI_PROMPT.md  ← die Regeln: Aufbau, Benennung, Verlinkung, Pflege</code></pr
 <!-- ======================= 3 · Simulation ======================= -->
 <section id="simulation">
   <h2>3 · Simulation: Schicht für Schicht zur besseren Antwort</h2>
-  <p class="lead">Derselbe Auftrag, sechsmal. Mit jedem Schritt kommt eine Prompt-Art dazu. Links sehen Sie, was im Kontextfenster steht, rechts, wie sich das Ergebnis verändert.</p>
+  <p class="lead">Derselbe Auftrag, sechsmal, in der Reihenfolge der vier Stufen. Mit jedem Schritt kommt eine Prompt-Art dazu. Links sehen Sie, was im Kontextfenster steht, rechts, wie sich das Ergebnis verändert.</p>
   <p class="muted">Die Antworten sind vereinfachte, typische Beispiele zur Veranschaulichung, keine echten Modellausgaben.</p>
   <div class="stepper-nav" id="stepNav" role="tablist" aria-label="Simulationsschritte"></div>
   <div class="sim">
@@ -477,6 +506,7 @@ WIKI_PROMPT.md  ← die Regeln: Aufbau, Benennung, Verlinkung, Pflege</code></pr
     <thead><tr><th></th>
       <th style="--k:var(--c-int)">Interaktion</th><th style="--k:var(--c-sys)">System</th><th style="--k:var(--c-skill)">Skill</th><th style="--k:var(--c-harn)">Harness</th><th style="--k:var(--c-loop)">Loop</th><th style="--k:var(--c-wiki)">Wiki</th></tr></thead>
     <tbody>
+      <tr><th>Stufe</th><td>1 · Sprechen</td><td>1 · Sprechen</td><td>2 · Harness</td><td>2 · Harness</td><td>3 · Grenzen prüfen</td><td>4 · Lernen</td></tr>
       <tr><th>Leitfrage</th><td>Was soll <i>jetzt</i> passieren?</td><td>Wer bin ich, welche Regeln gelten?</td><td>Wie erledige ich <i>diese Art</i> Aufgabe?</td><td>Was kann und darf ich tun?</td><td>Wann bin ich fertig?</td><td>Was wissen wir schon?</td></tr>
       <tr><th>Wer schreibt?</th><td>Nutzer:in</td><td>Anbieter / Lehrende</td><td>Fachleute, Team</td><td>Software-Hersteller</td><td>Nutzer:in / Entwickler:in</td><td>Team + KI gemeinsam</td></tr>
       <tr><th>Gültigkeit</th><td>eine Nachricht</td><td>ganze Sitzung</td><td>bei passender Aufgabe</td><td>ganze Agenten-Arbeit</td><td>pro Runde, bis Ziel</td><td>dauerhaft, über Sitzungen</td></tr>
@@ -522,6 +552,15 @@ WIKI_PROMPT.md  ← die Regeln: Aufbau, Benennung, Verlinkung, Pflege</code></pr
 AUFTRAG: Erstelle eine Gefährdungsbeurteilung für «Ihren Laboraufbau».</pre></div>
         <p>Probieren Sie den Auftrag auch <b>ohne</b> die Anweisung. Was liefert der Skill zusätzlich?</p></div>
 
+      <div class="box ex"><h3>Nachdenken über die Harness</h3>
+        <p>Eine Harness können Sie im normalen Chat nicht nachbauen, denn dort kann die KI nur schreiben, nicht handeln. Überlegen Sie stattdessen:</p>
+        <ul>
+          <li>Welche <b>Werkzeuge</b> bräuchte ein KI-Agent, der Ihnen bei der Vorbereitung eines Laborversuchs hilft?</li>
+          <li>Welche davon würden Sie <b>ohne Rückfrage</b> erlauben, welche <b>nie</b>?</li>
+          <li>Was sollte er tun, wenn er nach 10 Schritten nicht fertig ist? (Das führt direkt zur nächsten Übung.)</li>
+        </ul>
+        <p class="muted">Neugierig geworden? Schalten Sie oben auf <b>🔧 Fortgeschritten</b>: Dort gibt es ein Starter-Kit, mit dem Sie eine echte Mini-Harness laufen lassen.</p></div>
+
       <div class="box ex"><h3>Loop von Hand</h3>
         <p>Lassen Sie ein Arbeitsblatt erstellen. Schicken Sie dann diesen Prüfauftrag und wiederholen Sie ihn, bis alles erfüllt ist (höchstens 3-mal):</p>
         <div class="copywrap"><button class="copy" type="button">Kopieren</button><pre>Prüfe dein letztes Arbeitsblatt Punkt für Punkt gegen diese Checkliste und schreibe zu jedem Punkt „erfüllt“ oder „nicht erfüllt“:
@@ -538,15 +577,6 @@ Gib danach das vollständig überarbeitete Arbeitsblatt aus.</pre></div>
 Ergänze es um die wichtigsten Begriffe aus unserem heutigen Gespräch.
 Regeln: ein Abschnitt pro Begriff, Definition in 1–2 Sätzen, 3 Kernpunkte, keine erfundenen Inhalte. Gib das vollständige Wiki aus.</pre></div>
         <p>Speichern Sie das Ergebnis. Fügen Sie das Wiki beim nächsten Mal zu Beginn ein. Jetzt „erinnert“ sich die KI.</p></div>
-
-      <div class="box ex"><h3>Nachdenken über die Harness</h3>
-        <p>Eine Harness können Sie im normalen Chat nicht nachbauen, denn dort kann die KI nur schreiben, nicht handeln. Überlegen Sie stattdessen:</p>
-        <ul>
-          <li>Welche <b>Werkzeuge</b> bräuchte ein KI-Agent, der Ihnen bei der Vorbereitung eines Laborversuchs hilft?</li>
-          <li>Welche davon würden Sie <b>ohne Rückfrage</b> erlauben, welche <b>nie</b>?</li>
-          <li>Was sollte er tun, wenn er nach 10 Schritten nicht fertig ist?</li>
-        </ul>
-        <p class="muted">Neugierig geworden? Schalten Sie oben auf <b>🔧 Fortgeschritten</b>: Dort gibt es ein Starter-Kit, mit dem Sie eine echte Mini-Harness laufen lassen.</p></div>
     </div>
   </div>
 
@@ -619,6 +649,7 @@ $env:PROMPT_LABOR_MODEL="llama3.2:3b"        # Windows PowerShell</pre></div>
     <dt>Kontextfenster</dt><dd>Der gesamte Text, den das Modell für eine Antwort „liest“: Systemprompt, Skills, Wiki-Auszüge, Verlauf, Ihre Nachricht. Es ist begrenzt.</dd>
     <dt>Token</dt><dd>Wortstücke, in denen Modelle Text verarbeiten. Die Größe des Kontextfensters wird in Token gemessen.</dd>
     <dt>Agent</dt><dd>Sprachmodell + Harness: Es kann nicht nur antworten, sondern über Werkzeuge in mehreren Schritten handeln.</dd>
+    <dt>Lernender Agent</dt><dd>Agent, der Ergebnisse und Klärungen dauerhaft festhält (z. B. in einem Wiki) und beim nächsten Auftrag wieder nutzt.</dd>
     <dt>Werkzeug (Tool)</dt><dd>Eine Funktion, die die Harness für das Modell ausführt, z. B. Datei lesen oder im Web suchen.</dd>
     <dt>Progressive Disclosure</dt><dd>Wissen erst bei Bedarf in den Kontext laden (Prinzip der Skills).</dd>
     <dt>Prompt-Injection</dt><dd>Versuch, über eingeschleusten Text die Regeln eines Systemprompts auszuhebeln.</dd>
@@ -667,12 +698,12 @@ $env:PROMPT_LABOR_MODEL="llama3.2:3b"        # Windows PowerShell</pre></div>
 
   /* ---------- Types data ---------- */
   var T = {
-    int:   { name: "Interaktionsprompt", color: "--c-int", icon: "🗣️", short: "Ihre Nachricht im Chat: der konkrete Auftrag für jetzt.", who: "Sie", when: "diese Antwort", werk: "der mündliche Arbeitsauftrag" },
-    sys:   { name: "Systemprompt", color: "--c-sys", icon: "📋", short: "Unsichtbare Grundregeln vor dem Gespräch: Rolle, Ton und Grenzen.", who: "Anbieter / Lehrende", when: "ganze Sitzung", werk: "die Betriebsordnung" },
-    skill: { name: "Skillprompt", color: "--c-skill", icon: "📚", short: "Abgelegte Arbeitsanweisung, die nur bei passender Aufgabe geladen wird.", who: "Fachleute, Team", when: "bei Bedarf", werk: "der Ordner mit Arbeitsanweisungen" },
-    harn:  { name: "Harness-Prompt", color: "--c-harn", icon: "🏭", short: "Die Software um das Modell: Sie gibt Werkzeuge, Infos und Grenzen und führt Aktionen aus.", who: "Software-Hersteller", when: "die ganze Agenten-Arbeit", werk: "die Werkstatt mit Werkzeugen und Not-Aus" },
-    loop:  { name: "Loop-Prompt", color: "--c-loop", icon: "🔁", short: "Wiederholter Auftrag: ausführen, prüfen, verbessern, bis das Ziel erreicht ist.", who: "Sie / Entwickler:innen", when: "jede Runde", werk: "Messen und Nachbessern bis zur Toleranz" },
-    wiki:  { name: "Wiki-Prompt", color: "--c-wiki", icon: "📓", short: "Regeln für ein dauerhaftes Wissens-Wiki, das die KI liest und selbst weiterschreibt.", who: "Team + KI", when: "über viele Sitzungen", werk: "das Berichtsheft" }
+    int:   { name: "Interaktionsprompt", stage: "1 · Mit dem Modell sprechen", color: "--c-int", icon: "🗣️", short: "Ihre Nachricht im Chat: der konkrete Auftrag für jetzt.", who: "Sie", when: "diese Antwort", werk: "der mündliche Arbeitsauftrag" },
+    sys:   { name: "Systemprompt", stage: "1 · Mit dem Modell sprechen", color: "--c-sys", icon: "📋", short: "Unsichtbare Grundregeln vor dem Gespräch: Rolle, Ton und Grenzen.", who: "Anbieter / Lehrende", when: "ganze Sitzung", werk: "die Betriebsordnung" },
+    skill: { name: "Skillprompt", stage: "2 · Harness: Einfluss ausbauen", color: "--c-skill", icon: "📚", short: "Abgelegte Arbeitsanweisung, die die Harness nur bei passender Aufgabe nachlädt.", who: "Fachleute, Team", when: "bei Bedarf", werk: "der Ordner mit Arbeitsanweisungen" },
+    harn:  { name: "Harness-Prompt", stage: "2 · Harness: Einfluss ausbauen", color: "--c-harn", icon: "🏭", short: "Die Software um das Modell: Sie baut den Kontext zusammen, gibt Werkzeuge und Berechtigungen und führt Aktionen aus.", who: "Software-Hersteller", when: "die ganze Agenten-Arbeit", werk: "die Werkstatt mit Werkzeugen und Not-Aus" },
+    loop:  { name: "Loop-Prompt", stage: "3 · Loops: Grenzen prüfen", color: "--c-loop", icon: "🔁", short: "Wiederholter Auftrag mit Grenzen: ausführen, prüfen, verbessern, bis das Ziel erreicht ist oder ein Mensch übernimmt.", who: "Sie / Entwickler:innen", when: "jede Runde", werk: "Messen und Nachbessern bis zur Toleranz" },
+    wiki:  { name: "Wiki-Prompt", stage: "4 · Lernende Agenten", color: "--c-wiki", icon: "📓", short: "Regeln für ein dauerhaftes Wissens-Wiki, das die KI liest und selbst weiterschreibt. So lernt der Agent über Sitzungen hinweg.", who: "Team + KI", when: "über viele Sitzungen", werk: "das Berichtsheft" }
   };
 
   /* ---------- Tabs ---------- */
@@ -700,7 +731,7 @@ $env:PROMPT_LABOR_MODEL="llama3.2:3b"        # Windows PowerShell</pre></div>
     document.querySelectorAll(".picture .layer").forEach(function (l) { l.classList.toggle("active", l.dataset.type === key); });
     infoBox.style.setProperty("--accent", "var(" + t.color + ")");
     infoBox.innerHTML = "<h3>" + t.icon + " " + t.name + "</h3><p>" + t.short + "</p>" +
-      '<dl class="who"><dt>Wer schreibt?</dt><dd>' + t.who + "</dd><dt>Gilt für</dt><dd>" + t.when +
+      '<dl class="who"><dt>Stufe</dt><dd>' + t.stage + "</dd><dt>Wer schreibt?</dt><dd>" + t.who + "</dd><dt>Gilt für</dt><dd>" + t.when +
       "</dd><dt>Werkstatt-Bild</dt><dd>" + t.werk + "</dd></dl>" +
       '<p style="margin-bottom:0"><a href="#arten" data-goto="' + key + '">Mehr dazu ↓</a></p>';
   }
@@ -712,10 +743,10 @@ $env:PROMPT_LABOR_MODEL="llama3.2:3b"        # Windows PowerShell</pre></div>
     l.addEventListener("click", act);
     l.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(e); } });
   });
-  infoBox.addEventListener("click", function (e) {
+  document.addEventListener("click", function (e) {
     var a = e.target.closest("[data-goto]"); if (a) selectTab(a.dataset.goto);
   });
-  infoBox.innerHTML = "<h3>Wählen Sie einen Bereich</h3><p>Das Bild zeigt, wie die Prompt-Arten ineinandergreifen. Innen das <b>Kontextfenster</b> mit allem, was das Modell liest. Darum herum der <b>Loop</b>, der wiederholt und prüft. Ganz außen die <b>Harness</b>, die Werkzeuge bereitstellt und Grenzen setzt.</p>";
+  infoBox.innerHTML = "<h3>Wählen Sie einen Bereich</h3><p>Das Bild zeigt, wie die Prompt-Arten ineinandergreifen. <b>Stufe 1:</b> Im Kontextfenster stehen Ihre Nachricht und der Systemprompt. <b>Stufe 2:</b> Die <b>Harness</b> außen herum lädt Skills nach und stellt Werkzeuge bereit. <b>Stufe 3:</b> Der <b>Loop</b> lässt den Agenten in Runden arbeiten und prüft dabei seine Grenzen. <b>Stufe 4:</b> Das <b>Wiki</b> bringt gelerntes Wissen aus früheren Sitzungen zurück ins Kontextfenster.</p>";
 
   /* ---------- Simulation ---------- */
   var AUFTRAG = "Erstelle eine Gefährdungsbeurteilung für unseren Lötarbeitsplatz.";
@@ -732,18 +763,18 @@ $env:PROMPT_LABOR_MODEL="llama3.2:3b"        # Windows PowerShell</pre></div>
       add: { cls: "skill", title: "Skill geladen: gefaehrdungsbeurteilung", text: "Tabelle: Gefährdung | Ursache | Schutzmaßnahme (T-O-P) | Rechtsgrundlage\nRechtsgrundlage nur wenn sicher, sonst „bitte prüfen“." },
       out: "<table><tr><th>Gefährdung</th><th>Ursache</th><th>Maßnahme (T-O-P)</th><th>Recht</th></tr><tr><td>Verbrennung</td><td>Lötspitze ca. 350 °C</td><td>T: Ablageständer · O: Unterweisung</td><td>ArbSchG</td></tr><tr><td>Lötrauch</td><td>Flussmittel</td><td>T: Absaugung · P: –</td><td>GefStoffV</td></tr><tr><td>Brand</td><td>heiße Teile</td><td>O: Arbeitsplatz frei halten</td><td>bitte prüfen</td></tr></table><p><i>KI-Entwurf, muss fachkundig geprüft werden.</i></p>",
       verdict: "◐ Jetzt in der richtigen Form, nach T-O-P geordnet, ehrlich bei Unsicherheit. Aber weiterhin allgemein: Welche Absaugung? Welches Lot?" },
-    { key: "wiki", label: "+ Wiki",
-      add: { cls: "wiki", title: "Wiki-Seite: lötarbeitsplatz-labor-032.md", text: "6 Lötstationen, temperaturgeregelt (max. 380 °C)\nPunktabsaugung mit Filter an jedem Platz\nbleifreies Lot, Flussmittel auf Kolophoniumbasis\nNot-Aus an der Tür, Feuerlöscher CO₂" },
-      out: "<table><tr><th>Gefährdung</th><th>Ursache</th><th>Maßnahme (T-O-P)</th><th>Recht</th></tr><tr><td>Verbrennung</td><td>Lötstation bis 380 °C</td><td>T: Ablageständer, Temperatur auf 330 °C begrenzen · O: Unterweisung</td><td>ArbSchG</td></tr><tr><td>Kolophonium-Dämpfe</td><td>Flussmittel</td><td>T: Punktabsaugung einschalten <b>vor</b> Arbeitsbeginn</td><td>GefStoffV</td></tr><tr><td>Brand</td><td>heiße Teile</td><td>O: CO₂-Löscher an der Tür zeigen</td><td>bitte prüfen</td></tr></table>",
-      verdict: "✔ Konkret für <b>unseren</b> Raum: Das Wiki liefert Wissen aus früheren Sitzungen, das in keinem Prompt stand." },
     { key: "harn", label: "+ Harness",
-      add: { cls: "harn", title: "Harness: Werkzeuge & Umgebung", text: "Werkzeuge: lies_datei, schreibe_datei, fertig\nArbeitsordner: laborauftrag.txt, vorlage_gbu.docx\n→ Modell: lies_datei(\"laborauftrag.txt\")\n← Harness: „…Platinen für Lernfeld 3, 2er-Teams…“\n→ Modell: schreibe_datei(\"gbu_loetplatz.md\", …)" },
-      out: "<p>📄 <b>Datei angelegt:</b> <code>gbu_loetplatz.md</code></p><p>Die Tabelle enthält jetzt zusätzlich die Tätigkeit aus dem Laborauftrag (Platinen bestücken, 2er-Teams, LF 3) und eine Zeile „Gefährdung durch Zusammenarbeit (Kabelwege, Gedränge)“.</p>",
-      verdict: "✔ Das Modell <b>handelt</b>: Es liest selbst den Laborauftrag und legt eine Datei an. Möglich ist das nur, weil die Harness Werkzeuge bereitstellt und ausführt." },
+      add: { cls: "harn", title: "Harness: Werkzeuge, Umgebung, Berechtigungen", text: "Werkzeuge: lies_datei, schreibe_datei, fertig\nBerechtigung: nur im Arbeitsordner · Löschen nur mit Rückfrage\nArbeitsordner: laborauftrag.txt\n→ Modell: lies_datei(\"laborauftrag.txt\")\n← Harness: „…Platinen bestücken, Lernfeld 3, 2er-Teams, Labor 032…“\n→ Modell: schreibe_datei(\"gbu_loetplatz.md\", …)" },
+      out: "<p>📄 <b>Datei angelegt:</b> <code>gbu_loetplatz.md</code></p><table><tr><th>Gefährdung</th><th>Ursache</th><th>Maßnahme (T-O-P)</th><th>Recht</th></tr><tr><td>Verbrennung</td><td>Lötspitze ca. 350 °C</td><td>T: Ablageständer · O: Unterweisung</td><td>ArbSchG</td></tr><tr><td>Lötrauch</td><td>Flussmittel</td><td>T: Absaugung (Typ?)</td><td>GefStoffV</td></tr><tr><td>Brand</td><td>heiße Teile</td><td>O: Arbeitsplatz frei halten</td><td></td></tr><tr><td>Gedränge, Kabelwege</td><td>2er-Teams (Laborauftrag)</td><td>O: feste Plätze, Kabel sichern</td><td>bitte prüfen</td></tr></table>",
+      verdict: "◐ Das Modell <b>handelt</b>: Es liest selbst den Laborauftrag und legt eine Datei an. Möglich ist das nur, weil die Harness Werkzeuge bereitstellt, ausführt und begrenzt. Aber niemand prüft das Ergebnis: Zeile 3 hat keinen Beleg, ein Notfall-Abschnitt fehlt, und was in Labor 032 wirklich steht, weiß der Agent nicht." },
     { key: "loop", label: "+ Loop",
-      add: { cls: "loop", title: "Loop-Prompt: Prüfen & verbessern", text: "Prüfe gbu_loetplatz.md gegen die Checkliste:\n☐ jede Zeile hat T-, O- oder P-Maßnahme ☐ jede Rechtsgrundlage belegt\n☐ Notfall-Abschnitt vorhanden — max. 3 Runden\nRunde 1: ✘ Notfall-Abschnitt fehlt · ✘ Zeile 3 ohne Beleg\nRunde 2: ✔ alles erfüllt" },
-      out: "<p>📄 <code>gbu_loetplatz.md</code> (Runde 2)</p><table><tr><th>Gefährdung</th><th>Maßnahme</th><th>Recht</th></tr><tr><td>Verbrennung</td><td>T · O</td><td>ArbSchG § 4</td></tr><tr><td>Kolophonium-Dämpfe</td><td>T · O</td><td>GefStoffV</td></tr><tr><td>Brand</td><td>O</td><td>ASR A2.2 – <i>bitte prüfen</i></td></tr></table><p><b>Notfall:</b> Not-Aus an der Tür · CO₂-Löscher · Ersthelfer:in benennen.</p>",
-      verdict: "✔ Durch die eingeplante Prüfschleife wurden Lücken gefunden und geschlossen. <b>Trotzdem gilt:</b> Eine fachkundige Person prüft das Ergebnis, bevor es im Labor eingesetzt wird." }
+      add: { cls: "loop", title: "Loop-Prompt: Prüfen innerhalb von Grenzen", text: "Prüfe gbu_loetplatz.md gegen die Checkliste:\n☐ jede Zeile hat T-, O- oder P-Maßnahme ☐ jede Rechtsgrundlage belegt oder „bitte prüfen“\n☐ Notfall-Abschnitt vorhanden ☐ Ausstattung des Raums benannt\nGrenzen: max. 3 Runden · nichts erfinden · sonst an einen Menschen übergeben\nRunde 1: ✘ Notfall fehlt · ✘ Zeile 3 ohne Beleg · ✘ Ausstattung unbekannt\nRunde 2: ✔ Notfall · ✔ Beleg · ✘ Ausstattung unbekannt\nRunde 3: ✘ Ausstattung unbekannt → Abbruch, Rückfrage an Lehrkraft" },
+      out: "<p>📄 <code>gbu_loetplatz.md</code> (nach Runde 3)</p><table><tr><th>Gefährdung</th><th>Maßnahme</th><th>Recht</th></tr><tr><td>Verbrennung</td><td>T · O</td><td>ArbSchG § 4</td></tr><tr><td>Lötrauch</td><td>T: Absaugung (Typ?) · O</td><td>GefStoffV</td></tr><tr><td>Brand</td><td>O</td><td>ASR A2.2 – <i>bitte prüfen</i></td></tr></table><p><b>Notfall:</b> Not-Aus · Feuerlöscher · Ersthelfer:in benennen.</p><p>❓ <b>Rückfrage an die Lehrkraft:</b> Welche Absaugung, welches Lot und welcher Feuerlöscher sind in Labor 032 vorhanden? Ohne diese Angaben erfinde ich nichts.</p>",
+      verdict: "✔ Die Prüfschleife findet und schließt zwei Lücken. Und sie hält ihre <b>Grenzen</b> ein: Was der Agent nicht wissen kann, erfindet er nicht. Nach 3 Runden übergibt er an einen Menschen. ◐ Die Antwort der Lehrkraft wäre beim nächsten Auftrag aber wieder vergessen." },
+    { key: "wiki", label: "+ Wiki",
+      add: { cls: "wiki", title: "Wiki-Seite: lötarbeitsplatz-labor-032.md", text: "(angelegt aus der Antwort der Lehrkraft, beim Start gelesen)\n6 Lötstationen, temperaturgeregelt (max. 380 °C)\nPunktabsaugung mit Filter an jedem Platz\nbleifreies Lot, Flussmittel auf Kolophoniumbasis\nNot-Aus an der Tür, CO₂-Feuerlöscher\n← Agent ergänzt am Ende: „27.10.2026: GBU Lötplatz erstellt, ASR A2.2 noch prüfen“" },
+      out: "<p>📄 <code>gbu_loetplatz.md</code></p><table><tr><th>Gefährdung</th><th>Ursache</th><th>Maßnahme (T-O-P)</th><th>Recht</th></tr><tr><td>Verbrennung</td><td>Lötstation bis 380 °C</td><td>T: Ablageständer, Temperatur auf 330 °C begrenzen · O: Unterweisung</td><td>ArbSchG § 4</td></tr><tr><td>Kolophonium-Dämpfe</td><td>Flussmittel</td><td>T: Punktabsaugung einschalten <b>vor</b> Arbeitsbeginn</td><td>GefStoffV</td></tr><tr><td>Brand</td><td>heiße Teile</td><td>O: CO₂-Löscher an der Tür zeigen</td><td>ASR A2.2 – <i>bitte prüfen</i></td></tr></table><p><b>Notfall:</b> Not-Aus an der Tür · CO₂-Löscher · Ersthelfer:in benennen.</p><p>📓 <b>Wiki aktualisiert:</b> Erledigtes und offene Punkte stehen jetzt in <code>lötarbeitsplatz-labor-032.md</code>.</p>",
+      verdict: "✔ Der Agent <b>lernt</b>: Konkret für <b>unseren</b> Raum, mit Wissen, das in keinem Prompt stand. Was einmal geklärt wurde, muss beim nächsten Auftrag nicht neu erfragt werden. <b>Trotzdem gilt:</b> Eine fachkundige Person prüft das Ergebnis, bevor es im Labor eingesetzt wird, und hin und wieder auch das Wiki." }
   ];
   var cur = 0, nav = document.getElementById("stepNav");
   steps.forEach(function (s, i) {

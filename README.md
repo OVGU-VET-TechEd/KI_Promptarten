@@ -6,7 +6,7 @@ Interaktive Lerneinheit für Studierende ohne Informatik-Hintergrund:
 🌐 **Webseite:** https://ovgu-vet-teched.github.io/KI_Promptarten/
 
 - Zwei Lernniveaus (🌱 Einsteiger:in / 🔧 Fortgeschritten), umschaltbar auf der Seite
-- Interaktives Schichtenmodell, Schritt-für-Schritt-Simulation, Vergleichstabelle, Zuordnungsquiz
+- Roter Faden in vier Stufen (Sprechen → Harness → Loops → lernende Agenten), interaktives Schichtenmodell, Schritt-für-Schritt-Simulation, Vergleichstabelle, Zuordnungsquiz
 - Übungen für den Chat (z. B. HAWKI) ohne Installation
 - **Starter-Kit** [`kit/prompt-labor`](kit/prompt-labor) für VS Code + Ollama (lokales Modell, z. B. `gemma4:e2b`):
   sechs Python-Experimente ohne Zusatzpakete, eines pro Prompt-Art –
